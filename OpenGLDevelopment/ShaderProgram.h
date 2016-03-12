@@ -17,19 +17,19 @@ class ShaderProgram
 public:
 	// https://www.opengl.org/sdk/docs/tutorials/ClockworkCoders/attributes.php
 	// These constants are reserved in opengl (at least for NVidia): 
-	const GLint gl_Vertex			= 0;
-	const GLint gl_Normal			= 2;
-	const GLint gl_Color			= 3;
-	const GLint gl_SecondaryColor	= 4;
-	const GLint gl_FogCoord			= 5;
-	const GLint gl_MultiTexCoord0	= 8;
-	const GLint gl_MultiTexCoord1	= 9;
-	const GLint gl_MultiTexCoord2	= 10;
-	const GLint gl_MultiTexCoord3	= 11;
-	const GLint gl_MultiTexCoord4	= 12;
-	const GLint gl_MultiTexCoord5	= 13;
-	const GLint gl_MultiTexCoord6	= 14;
-	const GLint gl_MultiTexCoord7	= 15;
+	const static GLint gl_Vertex			= 0;
+	const static GLint gl_Normal = 2;
+	const static GLint gl_Color = 3;
+	const static GLint gl_SecondaryColor = 4;
+	const static GLint gl_FogCoord = 5;
+	const static GLint gl_MultiTexCoord0 = 8;
+	const static GLint gl_MultiTexCoord1 = 9;
+	const static GLint gl_MultiTexCoord2 = 10;
+	const static GLint gl_MultiTexCoord3 = 11;
+	const static GLint gl_MultiTexCoord4 = 12;
+	const static GLint gl_MultiTexCoord5 = 13;
+	const static GLint gl_MultiTexCoord6 = 14;
+	const static GLint gl_MultiTexCoord7 = 15;
 
 //---------------------------------------------------------------------------FIELDS:
 public:

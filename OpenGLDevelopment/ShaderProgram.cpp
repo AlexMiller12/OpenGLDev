@@ -9,6 +9,7 @@ ShaderProgram::ShaderProgram()
 ShaderProgram::ShaderProgram( const char* vertexSource,
 							  const char* fragmentSource )
 {
+	handle = shaderFromSource( vertexSource, fragmentSource );
 }
 
 ShaderProgram::~ShaderProgram() 
@@ -162,13 +163,16 @@ GLuint ShaderProgram::shaderFromSource( const char* vertexSource,
 	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
 	glCompileShader( vertexShaderHandle );
 	
-	// TODO: return on error
+	int isCompiled;
+	glGetShaderiv( vertexShaderHandle, GL_COMPILE_STATUS, &isCompiled );
+	if( ! isCompiled )   return -1;
 	
 	GLuint fragmentShaderHandle = glCreateShader( GL_FRAGMENT_SHADER );
 	glShaderSource( fragmentShaderHandle, 1, &fragmentSource, NULL );
 	glCompileShader( fragmentShaderHandle );
 
-	// TODO: return on error
+	glGetShaderiv( fragmentShaderHandle, GL_COMPILE_STATUS, &isCompiled );
+	if( !isCompiled )   return -1;
 
 	GLuint programHandle = glCreateProgram();
 	glAttachShader( programHandle, vertexShaderHandle );
