@@ -79,6 +79,16 @@ bool Renderer::createWindow()
 	return glewInitStatus == GLEW_OK;
 }
 
+bool Renderer::shouldClose()
+{
+	return glfwWindowShouldClose( window );
+}
+
+void Renderer::swapBuffers()
+{
+	glfwSwapBuffers( window );
+}
+
 void Renderer::unbind()
 {
 	glfwMakeContextCurrent( NULL );

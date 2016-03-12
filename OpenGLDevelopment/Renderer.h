@@ -38,6 +38,8 @@ public:
 	void bind();
 	void closeWindow();
 	bool createWindow();
+	bool shouldClose();
+	void swapBuffers();
 	void unbind();
 
 private:
