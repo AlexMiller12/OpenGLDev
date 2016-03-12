@@ -31,22 +31,22 @@ float colors[] =
 
 const char* vertex_shader =
 "#version 400\n"
-"in vec3 vp;"
-"in vec3 pop;"
+"in vec3 in_position;"
+"in vec3 in_color;"
 
-"out vec3 color;"
+"out vec3 ex_color;"
 
 "void main () {"
-"  f_col = vp;"
-"  gl_Position = vec4 (vp, 1.0);"
+"  ex_color = in_color + in_color;"
+"  gl_Position = vec4 (in_position, 1.0);"
 "}";
 
 const char* fragment_shader =
 "#version 400\n"
-"in vec3 color;"
-"out vec4 frag_colour;"
+"in vec3 ex_color;"
+"out vec4 gl_FragColor;"
 "void main () {"
-"  frag_colour = vec4 (color, 1.0);"
+"  gl_FragColor = vec4(ex_color,1.0);;"
 "}";
 
 //-----------------------------------------------------------------------PROTOTYPES:
@@ -61,15 +61,22 @@ int main( int numArguments, char** arguments )
 	renderer.createWindow();
 	renderer.bind();
 
-	ShaderProgram shaderProgram( vertex_shader, fragment_shader );
+	ShaderProgram shaderProgram;
 
+	if( ! shaderProgram.compileShaders( vertex_shader, fragment_shader ) )
+	{
+		printf( " oh now! " );
+	}
 	shaderProgram.use();
-	shaderProgram.setVec3VBO( "vp", points, 9 );
-	shaderProgram.enableVec3Attribute( "vp", ShaderProgram::gl_Vertex );
+	shaderProgram.createVBO( "pop" );
+
+	shaderProgram.setVec3VBO( "gl_Vertex", colors, 9 );
+	shaderProgram.enableVec3Attribute( "gl_Vertex", ShaderProgram::gl_Vertex );
 
 	shaderProgram.setVec3VBO( "pop", colors, 9 );
-	shaderProgram.enableVec3Attribute( "pop", ShaderProgram::gl_Color );
+	shaderProgram.enableVec3Attribute( "pop", ShaderProgram::gl_FogCoord );
 
+	shaderProgram.finalizeProgram();
 	while( ! renderer.shouldClose() ) {
 		// wipe the drawing surface clear
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -82,7 +89,6 @@ int main( int numArguments, char** arguments )
 		// put the stuff we've been drawing onto the display
 		renderer.swapBuffers();
 	}
-
 	// close GL context and any other GLFW resources
 	renderer.unbind();
 	renderer.closeWindow();

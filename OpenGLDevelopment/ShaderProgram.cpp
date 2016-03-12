@@ -6,12 +6,6 @@ ShaderProgram::ShaderProgram()
 {
 }
 
-ShaderProgram::ShaderProgram( const char* vertexSource,
-							  const char* fragmentSource )
-{
-	handle = shaderFromSource( vertexSource, fragmentSource );
-}
-
 ShaderProgram::~ShaderProgram() 
 {
 	// TODO, clean up!
@@ -20,6 +14,61 @@ ShaderProgram::~ShaderProgram()
 //------------------------------------------------------------------------FUNCTIONS:
 
 //--------------------------------------------------------------------------METHODS:
+
+bool ShaderProgram::createVBO( string attributeName )
+{
+	// Check that our vertex array object has been created
+	if( ! isVAOInitialized )
+	{
+		// If not, create it
+		glGenVertexArrays( 1, &vertexArrayObjectHandle );
+
+		//TODO return false on error
+
+		isVAOInitialized = true;
+	}
+	// Bind to VAO so we assign new VBO to it
+	glBindVertexArray( vertexArrayObjectHandle );
+
+	// Generate new buffer
+	GLuint newVBOHandle;
+	glGenBuffers( 1, &newVBOHandle );
+
+	//TODO return false on error
+
+	// Store handle for quick lookup later
+	attributeLocations[attributeName] = newVBOHandle;
+
+	// Assign it to "in vec3" variable in shader
+	glBindAttribLocation( handle, newVBOHandle, attributeName.c_str() );
+
+	return true;
+}
+
+// Compiles and links a shader program from given sources. Returns true on success
+bool ShaderProgram::compileShaders( const char* vertexSource,
+									const char* fragmentSource )
+{
+	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
+	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
+	glCompileShader( vertexShaderHandle );
+	
+	int succeeded;
+	glGetShaderiv( vertexShaderHandle, GL_COMPILE_STATUS, &succeeded );
+	if( ! succeeded )   return false; //TODO delete shader
+	
+	GLuint fragmentShaderHandle = glCreateShader( GL_FRAGMENT_SHADER );
+	glShaderSource( fragmentShaderHandle, 1, &fragmentSource, NULL );
+	glCompileShader( fragmentShaderHandle );
+
+	glGetShaderiv( fragmentShaderHandle, GL_COMPILE_STATUS, &succeeded );
+	if( ! succeeded )   return false; //TODO delete shader
+
+	shaders.push_back( vertexShaderHandle );
+	shaders.push_back( fragmentShaderHandle );
+	return true;
+
+}
 
 bool ShaderProgram::enableVec3Attribute( string attributeName, 
 										 GLuint attributeindex )
@@ -43,6 +92,25 @@ bool ShaderProgram::enableVec3Attribute( string attributeName,
 
 	//TODO falseonerror
 
+	return true;
+}
+
+bool ShaderProgram::finalizeProgram()
+{
+
+	GLuint handle = glCreateProgram();
+
+	for( int i = 0; i < shaders.size(); i++ )
+	{
+		glAttachShader( handle, shaders[i] );
+		// TODO: delete shaders
+	}
+		
+	glLinkProgram( handle );
+
+	int succeeded;
+	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&succeeded );
+	if( ! succeeded )   return false;
 	return true;
 }
 
@@ -117,6 +185,7 @@ bool ShaderProgram::setVec3VBO( string attributeName,
 	return true;
 }	
 
+
 void ShaderProgram::use()
 {
 	glUseProgram( handle );
@@ -125,62 +194,7 @@ void ShaderProgram::use()
 
 //--------------------------------------------------------------------------HELPERS:
 
-bool ShaderProgram::createVBO( string attributeName )
-{
-	// Check that our vertex array object has been created
-	if( ! isVAOInitialized )
-	{
-		// If not, create it
-		glGenVertexArrays( 1, &vertexArrayObjectHandle );
-
-		//TODO return false on error
-
-		isVAOInitialized = true;
-	}
-	// Bind to VAO so we assign new VBO to it
-	glBindVertexArray( vertexArrayObjectHandle );
-
-	// Generate new buffer
-	GLuint newVBOHandle;
-	glGenBuffers( 1, &newVBOHandle );
-
-	//TODO return false on error
-
-	// Store handle for quick lookup later
-	attributeLocations[attributeName] = newVBOHandle;
-
-	return true;
-}
 
 
-// Compiles and links a shader program from given sources and returns handle on
-// success, -1 on failure.
-GLuint ShaderProgram::shaderFromSource( const char* vertexSource,
-									    const char* fragmentSource )
-{
-	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
-	glCompileShader( vertexShaderHandle );
-	
-	int isCompiled;
-	glGetShaderiv( vertexShaderHandle, GL_COMPILE_STATUS, &isCompiled );
-	if( ! isCompiled )   return -1;
-	
-	GLuint fragmentShaderHandle = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fragmentShaderHandle, 1, &fragmentSource, NULL );
-	glCompileShader( fragmentShaderHandle );
-
-	glGetShaderiv( fragmentShaderHandle, GL_COMPILE_STATUS, &isCompiled );
-	if( !isCompiled )   return -1;
-
-	GLuint programHandle = glCreateProgram();
-	glAttachShader( programHandle, vertexShaderHandle );
-	glAttachShader( programHandle, fragmentShaderHandle );
-	glLinkProgram( programHandle );
-
-	// TODO: delete shaders
-
-	return programHandle;
-}
 
 
