@@ -124,26 +124,6 @@ const GLfloat g_vertex_buffer_data[] = {
 	  0.0f, 1.0f, 0.0f,
 	};
 
-const char* vertex_shader =
-"precision highp float;"
-"in vec3 in_position;"
-"in vec3 in_color;"
-
-"out vec3 ex_color;"
-
-"void main () {"
-"  ex_color = in_color + in_color;"
-"  gl_Position = vec4 (in_position, 1.0);"
-"}";
-
-const char* fragment_shader =
-"#version 150\n"
-"in vec3 ex_color;"
-"out vec4 gl_FragColor;"
-"void main () {"
-"  gl_FragColor = vec4(1.0);"
-"}";
-
 const char* vert2 =
 "#version 450\n"
 "uniform mat4 mvp;"
@@ -160,6 +140,28 @@ const char* frag2 =
 "void main(){"
 "color = vec4(1.0, 0.0, 0.0, 1.0);"
 "}";
+
+
+
+const char* vertex_shader =
+"in vec3 in_position;"
+"in vec3 in_color;"
+
+"out vec3 ex_color;"
+
+"void main () {"
+"  ex_color = in_position;"
+"  gl_Position = vec4 (in_position, 1.0);"
+"}";
+
+const char* fragment_shader =
+"#version 450\n"
+"in vec3 ex_color;"
+"out vec4 gl_FragColor;"
+"void main () {"
+"  gl_FragColor = vec4(ex_color, 1.0);"
+"}";
+
 
 //-----------------------------------------------------------------------PROTOTYPES:
 
@@ -184,38 +186,41 @@ void blarg()
 	renderer.createWindow();
 	renderer.bind();
 
-	Camera camera( 45.0f, 1.0f, 0.1f, 100.0f );
-	camera.lookAt( vec3( 1.5, 0, -5 ), vec3( 0, 0, 0 ), vec3( 0, 1, 0 ) );
 
 	ShaderProgram shaderProgram;
 	shaderProgram.init( false );
 	//	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
-	if( !shaderProgram.attatchShaders( vert2, frag2 ) )
+	if( !shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
 	{
 		printf( " oh now! " );
 		exit( 1 );
 	}
 
-	shaderProgram.bindToVAO();
-	shaderProgram.createVBO( "inPos", ShaderProgram::gl_Vertex );
-	shaderProgram.setVec3VBO( "inPos", (GLfloat*)g_vertex_buffer_data, 9 );
-	shaderProgram.enableVec3Attribute( "inPos" );
-
-	glm::mat4 blarg = camera.viewProjectionMatrix();
-	shaderProgram.setUniform( "mvp", camera.viewProjectionMatrix() );
+	shaderProgram.createVBO( "in_position", ShaderProgram::gl_Vertex );
+	shaderProgram.setVec3VBO( "in_position", (GLfloat*)cube, 36 );
+	shaderProgram.enableVec3Attribute( "in_position" );
+	
+	shaderProgram.createVBO( "in_color", ShaderProgram::gl_Color );
+	shaderProgram.setVec3VBO( "in_color", (GLfloat*)cubeColor, 36 );
+	shaderProgram.enableVec3Attribute( "in_color" );
+	
+	//Camera camera( 45.0f, 1.0f, 0.1f, 100.0f );
+	//camera.lookAt( vec3( 1.5, 0, -5 ), vec3( 0, 0, 0 ), vec3( 0, 1, 0 ) );
+	//glm::mat4 blarg = camera.viewProjectionMatrix();
+	//shaderProgram.setUniform( "mvp", camera.viewProjectionMatrix() );
 
 	shaderProgram.finalizeProgram();
 
-	glClearColor( 0.0f, 0.0f, 0.4f, 0.0f );
-	glEnable( GL_DEPTH_TEST );
-	glDepthFunc( GL_LESS );
+	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+	//glEnable( GL_DEPTH_TEST );
+	//glDepthFunc( GL_LESS );
 	while( ! renderer.shouldClose() )
 	{
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		shaderProgram.use();
 
 		/* Invoke glDrawArrays telling that our data is a line loop and we want to draw 4 vertices */
-		glDrawArrays( GL_TRIANGLES, 0, 3 );
+		glDrawArrays( GL_TRIANGLES, 0, 36 );
 
 		// update other events like input handling 
 		glfwPollEvents();
