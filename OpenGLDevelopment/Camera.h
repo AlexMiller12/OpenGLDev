@@ -18,8 +18,8 @@ class Camera
 private:
 	float fov;
 	float aspect;
-	float near;
-	float far;
+	float nearClip;
+	float farClip;
 
 	vec3 pos;
 	vec3 center;
@@ -31,6 +31,8 @@ private:
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 		
+public:
+	Camera();
 	Camera( float fieldOfView, float aspectRatio, float nearClip, float farClip );
 	~Camera();
 
@@ -40,6 +42,7 @@ private:
 
 public:
 	void lookAt( vec3 position, vec3 lookAt, vec3 up );
+	mat4 viewProjectionMatrix();
 private:
 	void calcProjection();
 };

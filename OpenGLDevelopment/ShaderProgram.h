@@ -43,6 +43,7 @@ private:
 	GLuint handle;
 	// Handle to the vao to which we will account any vbos
 	GLuint vertexArrayObjectHandle;
+	GLuint indexBufferHandle;
 
 	unordered_map<string, GLint> uniformLocations;
 	unordered_map<string, GLint> attributeLocations;
@@ -71,7 +72,11 @@ public:
 	GLuint getHandle();
 	GLuint getUniformLocation( string name );  //TODO protected?
 
+	bool init( bool createIndexBuffer );
+
 	bool setUniform( string uniformName, mat4 matrix );
+
+	bool setIndices( int indices[], int numFaces );
 
 	bool setVec3VBO( string attributeName,  
 					 GLfloat data[], 

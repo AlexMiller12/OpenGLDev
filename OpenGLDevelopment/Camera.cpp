@@ -2,16 +2,25 @@
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 
+Camera::Camera()
+{
+}
+
 Camera::Camera( float fieldOfView,
 				float aspectRatio, 
-				float nearClip, 
-				float farClip )
+				float nearClipPlane, 
+				float farClipPlane )
 {
 	fov = fieldOfView;
 	aspect = aspectRatio;
-	near = nearClip;
-	far = farClip;	
+	nearClip = nearClipPlane;
+	farClip = farClipPlane;
 	calcProjection();
+}
+
+Camera::~Camera()
+{
+
 }
 
 //------------------------------------------------------------------------FUNCTIONS:
@@ -25,10 +34,14 @@ void Camera::lookAt( vec3 position, vec3 lookAt, vec3 cameraUp )
 	up = cameraUp;
 	view = glm::lookAt( pos, center, up );
 }
+mat4 Camera::viewProjectionMatrix()
+{	
+	return (projection * view);
+}
 
 //--------------------------------------------------------------------------HELPERS:
 
 void Camera::calcProjection()
 {
-	projection = glm::perspective( fov, aspect, near, far );
+	projection = glm::perspective( fov, aspect, nearClip, farClip );
 }

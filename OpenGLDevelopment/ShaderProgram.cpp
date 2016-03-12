@@ -5,9 +5,6 @@
 
 ShaderProgram::ShaderProgram()
 {
-	// TODO: too much in constructor?
-	handle = glCreateProgram();
-	glGenVertexArrays( 1, &vertexArrayObjectHandle );
 }
 
 ShaderProgram::~ShaderProgram() 
@@ -52,6 +49,8 @@ bool ShaderProgram::bindToVAO()
 	return true;
 }
 
+// Initializes a vertex buffer and assigns given attribute index (for when we want
+// to create a pointer to buffer)
 bool ShaderProgram::createVBO( string attributeName, GLuint attributeindex )
 {
 	// Bind to VAO so we assign new VBO to it
@@ -74,6 +73,7 @@ bool ShaderProgram::createVBO( string attributeName, GLuint attributeindex )
 	return true;
 }
 
+// Enables an attribute pointer to buffer with given name
 bool ShaderProgram::enableVec3Attribute( string attributeName )
 {
 	GLuint bufferHandle = getAttributeLocation( attributeName );
@@ -156,6 +156,26 @@ GLuint ShaderProgram::getUniformLocation( string name )
 	}
 	return uniformLocation;
 }
+
+// Initializes index buffer
+bool ShaderProgram::init( bool createIndexBuffer )
+{
+	handle = glCreateProgram();
+	glGenVertexArrays( 1, &vertexArrayObjectHandle );
+	// TODO: return false on error
+	if( createIndexBuffer )
+	{
+		glGenBuffers( 1, &indexBufferHandle );
+		// TODO: return false on error
+	}
+	return true;
+}
+
+bool setIndices( int indices[], int numFaces )
+{
+	return true;
+}
+
 
 bool ShaderProgram::setUniform( string uniformName, mat4 matrix )
 {

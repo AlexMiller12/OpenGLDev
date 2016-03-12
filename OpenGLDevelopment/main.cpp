@@ -13,6 +13,7 @@
 
 #include "Renderer.h"
 #include "ShaderProgram.h"
+#include "Camera.h"
 
 //--------------------------------------------------------------------------GLOBALS:
 
@@ -56,7 +57,7 @@ const GLfloat cube[] =
 	1.0f, -1.0f, 1.0f
 };
 // One color for each vertex. They were generated randomly.
-static const GLfloat g_color_buffer_data[] =
+static const GLfloat cubeColor[] =
 {
 	0.583f, 0.771f, 0.014f,
 	0.609f, 0.115f, 0.436f,
@@ -145,10 +146,12 @@ const char* fragment_shader =
 
 const char* vert2 =
 "#version 450\n"
+"uniform mat4 mvp;"
 "in vec3 inPos;"
 "void main(){"
-"gl_Position.xyz = inPos;"
-"gl_Position.w = 1.0;"
+"vec4 position = vec4( inPos, 1.0 );"
+"gl_Position = mvp * position;"
+//"gl_Position = position;"
 "}";
 
 const char* frag2 =
@@ -181,8 +184,11 @@ void blarg()
 	renderer.createWindow();
 	renderer.bind();
 
-	ShaderProgram shaderProgram;
+	Camera camera( 45.0f, 1.0f, 0.1f, 100.0f );
+	camera.lookAt( vec3( 1.5, 0, -5 ), vec3( 0, 0, 0 ), vec3( 0, 1, 0 ) );
 
+	ShaderProgram shaderProgram;
+	shaderProgram.init( false );
 	//	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
 	if( !shaderProgram.attatchShaders( vert2, frag2 ) )
 	{
@@ -195,9 +201,14 @@ void blarg()
 	shaderProgram.setVec3VBO( "inPos", (GLfloat*)g_vertex_buffer_data, 9 );
 	shaderProgram.enableVec3Attribute( "inPos" );
 
+	glm::mat4 blarg = camera.viewProjectionMatrix();
+	shaderProgram.setUniform( "mvp", camera.viewProjectionMatrix() );
+
 	shaderProgram.finalizeProgram();
 
 	glClearColor( 0.0f, 0.0f, 0.4f, 0.0f );
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LESS );
 	while( ! renderer.shouldClose() )
 	{
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
