@@ -5,8 +5,11 @@
 #include <vector>
 #include "Dependencies\glew\glew.h"
 #include "Dependencies\glfw\glfw3.h"
+#include "Dependencies\glm\glm.hpp"
+#include "Dependencies\glm\gtc\matrix_transform.hpp"
 
 using namespace std;
+using namespace glm;
 
 class ShaderProgram
 {
@@ -47,7 +50,6 @@ private:
 
 	//vector<GLuint> shaders; 
 
-	bool isVAOInitialized;
 	//unordered_map<string, GLint> samplerTextureNumbers;
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
@@ -65,12 +67,13 @@ public:
 	bool enableVec3Attribute( string attributeName, GLuint attributeindex );
 
 	bool finalizeProgram();
-	GLuint getAttributeLocation( string name );
+	GLuint getAttributeLocation( string name ); //TODO protected?
 	GLuint getHandle();
-	GLuint getUniformLocation( string name );
+	GLuint getUniformLocation( string name );  //TODO protected?
 
+	bool setUniform( string uniformName, mat4 matrix );
 
-	bool setVec3VBO( string attributeName, 
+	bool setVec3VBO( string attributeName,  
 					 GLfloat data[], 
 					 int dataLength, 
 					 GLenum usage = GL_STATIC_DRAW );

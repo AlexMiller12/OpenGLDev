@@ -22,8 +22,8 @@ private:
 	float far;
 
 	vec3 pos;
-	vec3 lookingAt;
-	vec3 cameraUp;
+	vec3 center;
+	vec3 up;
 
 	mat4 view;
 	mat4 projection;

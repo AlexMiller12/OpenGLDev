@@ -5,6 +5,9 @@
 
 ShaderProgram::ShaderProgram()
 {
+	// TODO: too much in constructor?
+	handle = glCreateProgram();
+	glGenVertexArrays( 1, &vertexArrayObjectHandle );
 }
 
 ShaderProgram::~ShaderProgram() 
@@ -21,7 +24,6 @@ bool ShaderProgram::attatchShaders( const char* vertexSource,
 									const char* fragmentSource )
 {
 
-	handle = glCreateProgram();
 
 	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
 	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
@@ -47,28 +49,14 @@ bool ShaderProgram::attatchShaders( const char* vertexSource,
 
 bool ShaderProgram::bindToVAO()
 {
-	if( !isVAOInitialized )
-	{
-		return false;
-	}
 	glBindVertexArray( vertexArrayObjectHandle );
 	return true;
 }
 
 bool ShaderProgram::createVBO( string attributeName )
 {
-	// Check that our vertex array object has been created
-	if( !isVAOInitialized )
-	{
-		// If not, create it
-		glGenVertexArrays( 1, &vertexArrayObjectHandle );
-
-		//TODO return false on error
-
-		isVAOInitialized = true;
-	}
 	// Bind to VAO so we assign new VBO to it
-	glBindVertexArray( vertexArrayObjectHandle );
+	bindToVAO();
 
 	// Generate new buffer
 	GLuint newVBOHandle;
@@ -102,11 +90,11 @@ bool ShaderProgram::enableVec3Attribute( string attributeName,
 	glVertexAttribPointer( attributeindex,
 						   floatsPerVertex, 
 						   GL_FLOAT, 
-						   GL_FALSE, 
-						   0, 0 );
+						   GL_FALSE, // normalized?
+						   0,		 // stride 
+						   0 );      // array buffer offset
 
 	//TODO falseonerror
-
 	return true;
 }
 
@@ -116,6 +104,9 @@ bool ShaderProgram::finalizeProgram()
 
 	int succeeded;
 	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&succeeded );
+
+	// TODO go through shaders and detach and delete them
+
 	if( ! succeeded )   return false;
 	return true;
 }
@@ -165,29 +156,37 @@ GLuint ShaderProgram::getUniformLocation( string name )
 	return uniformLocation;
 }
 
+bool ShaderProgram::setUniform( string uniformName, mat4 matrix )
+{
+	GLuint uniformLocation = getUniformLocation( uniformName );
+	glUniformMatrix4fv( uniformLocation, 1, GL_FALSE, &matrix[0][0] );
+	// TODO if debug mode return false on error
+	return true;
+}
+
 bool ShaderProgram::setVec3VBO( string attributeName, 
 								GLfloat data[], 
 								int dataLength, 
 								GLenum usage )
 {
-	if( ! attributeLocations[attributeName] )
-	{
-		createVBO( attributeName );
-	}
+	// If the VBO has not been created, return false
+	if( ! attributeLocations[attributeName] )   return false;
+
+	// Bind to VAO so we assign new VBO to it
+	bindToVAO();
+	
 	// Find handle to data buffer
 	GLuint bufferHandle = getAttributeLocation( attributeName );
-	// Bind to VAO so we assign new VBO to it
-	glBindVertexArray( vertexArrayObjectHandle );
+
 	// Bind to the VBO
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
+
 	// Set the data of the buffer
 	glBufferData( GL_ARRAY_BUFFER, 
 				  dataLength * sizeof( GLfloat ), 
 				  data, 
 				  usage );
-
-
-	//TODO return false on errors
+	//TODO return false on errors if debug mode
 	return true;
 }	
 

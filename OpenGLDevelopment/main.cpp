@@ -117,6 +117,12 @@ const GLfloat colors[12] =
 	 0.0, 0.0, 1.0, /* Blue */
 	 1.0, 1.0, 1.0 }; /* White */
 
+const GLfloat g_vertex_buffer_data[] = {
+	- 1.0f, -1.0f, 0.0f,
+	  1.0f, -1.0f, 0.0f,
+	  0.0f, 1.0f, 0.0f,
+	};
+
 const char* vertex_shader =
 "precision highp float;"
 "in vec3 in_position;"
@@ -137,6 +143,19 @@ const char* fragment_shader =
 "  gl_FragColor = vec4(1.0);"
 "}";
 
+const char* vert2 =
+"in vec3 vertexPosition_modelspace;"
+"void main(){"
+"gl_Position.xyz = vertexPosition_modelspace;"
+"gl_Position.w = 1.0;"
+"}";
+
+const char* frag2 =
+"out vec3 color;"
+"void main(){"
+"color = vec3(1.0, 0.0, 0.0);"
+"}";
+
 //-----------------------------------------------------------------------PROTOTYPES:
 
 void blarg();
@@ -151,32 +170,27 @@ int main( int numArguments, char** arguments )
 
 	ShaderProgram shaderProgram;
 
-	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
+//	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
+	if( !shaderProgram.attatchShaders( vert2, frag2 ) )
 	{
 		printf( " oh now! " );
+		exit( 1 );
 	}
+
 	shaderProgram.bindToVAO();
+
 	shaderProgram.createVBO( "in_position" );
-	shaderProgram.setVec3VBO( "in_position", (GLfloat*)diamond, 12 );
-	shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
-
-	shaderProgram.createVBO( "in_color" );
-	shaderProgram.setVec3VBO( "in_color", (GLfloat*)colors, 12 );
-	shaderProgram.enableVec3Attribute( "in_color", ShaderProgram::gl_FogCoord );
-
-	shaderProgram.finalizeProgram();
-	//shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
-	//shaderProgram.enableVec3Attribute( "in_color", ShaderProgram::gl_FogCoord );
+	shaderProgram.setVec3VBO( "in_position", (GLfloat*)g_vertex_buffer_data, 9 );
+	
+//	shaderProgram.finalizeProgram();
 
 	while( ! renderer.shouldClose() ) 
 	{
-		shaderProgram.use();
-		/* Make our background black */
-		glClearColor( 0.1, 0.1, 0.1, 1.0 );
-		glClear( GL_COLOR_BUFFER_BIT );
 
+		shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
+		
 		/* Invoke glDrawArrays telling that our data is a line loop and we want to draw 4 vertices */
-		glDrawArrays( GL_LINE_LOOP, 0, 4 );
+		glDrawArrays( GL_TRIANGLES, 0, 3 );
 
 		// update other events like input handling 
 		glfwPollEvents();
