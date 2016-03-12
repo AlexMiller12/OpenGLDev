@@ -118,7 +118,7 @@ const GLfloat colors[12] =
 	 1.0, 1.0, 1.0 }; /* White */
 
 const char* vertex_shader =
-"#version 400\n"
+"precision highp float;"
 "in vec3 in_position;"
 "in vec3 in_color;"
 
@@ -130,7 +130,7 @@ const char* vertex_shader =
 "}";
 
 const char* fragment_shader =
-"#version 400\n"
+"#version 150\n"
 "in vec3 ex_color;"
 "out vec4 gl_FragColor;"
 "void main () {"
@@ -151,27 +151,28 @@ int main( int numArguments, char** arguments )
 
 	ShaderProgram shaderProgram;
 
-	if( ! shaderProgram.compileShaders( vertex_shader, fragment_shader ) )
+	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
 	{
 		printf( " oh now! " );
 	}
-	//shaderProgram.use();
+	shaderProgram.bindToVAO();
 	shaderProgram.createVBO( "in_position" );
 	shaderProgram.setVec3VBO( "in_position", (GLfloat*)diamond, 12 );
-	//shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
+	shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
 
 	shaderProgram.createVBO( "in_color" );
 	shaderProgram.setVec3VBO( "in_color", (GLfloat*)colors, 12 );
-	//shaderProgram.enableVec3Attribute( "in_color", ShaderProgram::gl_FogCoord );
+	shaderProgram.enableVec3Attribute( "in_color", ShaderProgram::gl_FogCoord );
 
 	shaderProgram.finalizeProgram();
-	shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
-	shaderProgram.enableVec3Attribute( "in_color", ShaderProgram::gl_FogCoord );
+	//shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
+	//shaderProgram.enableVec3Attribute( "in_color", ShaderProgram::gl_FogCoord );
 
 	while( ! renderer.shouldClose() ) 
 	{
+		shaderProgram.use();
 		/* Make our background black */
-		glClearColor( 0.0, 0.0, 0.0, 1.0 );
+		glClearColor( 0.1, 0.1, 0.1, 1.0 );
 		glClear( GL_COLOR_BUFFER_BIT );
 
 		/* Invoke glDrawArrays telling that our data is a line loop and we want to draw 4 vertices */

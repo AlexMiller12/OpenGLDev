@@ -59,7 +59,8 @@ public:
 //--------------------------------------------------------------------------METHODS:
 
 public:
-	bool compileShaders( const char* vertexSource, const char* fragmentSource );
+	bool attatchShaders( const char* vertexSource, const char* fragmentSource );
+	bool bindToVAO(); 
 	bool createVBO( string attributeName );
 	bool enableVec3Attribute( string attributeName, GLuint attributeindex );
 

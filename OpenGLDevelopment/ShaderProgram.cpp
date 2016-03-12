@@ -1,5 +1,6 @@
 #include "ShaderProgram.h"
 
+
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 
 ShaderProgram::ShaderProgram()
@@ -15,38 +16,8 @@ ShaderProgram::~ShaderProgram()
 
 //--------------------------------------------------------------------------METHODS:
 
-bool ShaderProgram::createVBO( string attributeName )
-{
-	// Check that our vertex array object has been created
-	if( ! isVAOInitialized )
-	{
-		// If not, create it
-		glGenVertexArrays( 1, &vertexArrayObjectHandle );
-
-		//TODO return false on error
-
-		isVAOInitialized = true;
-	}
-	// Bind to VAO so we assign new VBO to it
-	glBindVertexArray( vertexArrayObjectHandle );
-
-	// Generate new buffer
-	GLuint newVBOHandle;
-	glGenBuffers( 1, &newVBOHandle );
-
-	//TODO return false on error
-
-	// Store handle for quick lookup later
-	attributeLocations[attributeName] = newVBOHandle;
-
-	// Assign it to "in vec3" variable in shader
-	glBindAttribLocation( handle, newVBOHandle, attributeName.c_str() );
-
-	return true;
-}
-
 // Compiles and links a shader program from given sources. Returns true on success
-bool ShaderProgram::compileShaders( const char* vertexSource,
+bool ShaderProgram::attatchShaders( const char* vertexSource,
 									const char* fragmentSource )
 {
 
@@ -72,6 +43,46 @@ bool ShaderProgram::compileShaders( const char* vertexSource,
 
 	return true;
 
+}
+
+bool ShaderProgram::bindToVAO()
+{
+	if( !isVAOInitialized )
+	{
+		return false;
+	}
+	glBindVertexArray( vertexArrayObjectHandle );
+	return true;
+}
+
+bool ShaderProgram::createVBO( string attributeName )
+{
+	// Check that our vertex array object has been created
+	if( !isVAOInitialized )
+	{
+		// If not, create it
+		glGenVertexArrays( 1, &vertexArrayObjectHandle );
+
+		//TODO return false on error
+
+		isVAOInitialized = true;
+	}
+	// Bind to VAO so we assign new VBO to it
+	glBindVertexArray( vertexArrayObjectHandle );
+
+	// Generate new buffer
+	GLuint newVBOHandle;
+	glGenBuffers( 1, &newVBOHandle );
+
+	//TODO return false on error
+
+	// Store handle for quick lookup later
+	attributeLocations[attributeName] = newVBOHandle;
+
+	// Assign it to "in vec3" variable in shader
+	glBindAttribLocation( handle, newVBOHandle, attributeName.c_str() );
+
+	return true;
 }
 
 bool ShaderProgram::enableVec3Attribute( string attributeName, 
@@ -184,7 +195,6 @@ bool ShaderProgram::setVec3VBO( string attributeName,
 void ShaderProgram::use()
 {
 	glUseProgram( handle );
-	glBindVertexArray( vertexArrayObjectHandle );
 }
 
 //--------------------------------------------------------------------------HELPERS:
