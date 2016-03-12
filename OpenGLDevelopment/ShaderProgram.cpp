@@ -71,7 +71,6 @@ GLuint ShaderProgram::getHandle()
 	return handle;
 }
 
-
 // Returns the handle of the unifrom or attribute associated with given name
 GLuint ShaderProgram::getUniformLocation( string name )
 {

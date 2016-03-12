@@ -22,18 +22,31 @@ float points[] = {
 	-0.5f, -0.5f, 0.0f
 };
 
+float colors[] =
+{
+	1, 0, 0,
+	0, 1, 0,
+	0, 0, 1
+};
+
 const char* vertex_shader =
 "#version 400\n"
 "in vec3 vp;"
+"in vec3 pop;"
+
+"out vec3 color;"
+
 "void main () {"
+"  f_col = vp;"
 "  gl_Position = vec4 (vp, 1.0);"
 "}";
 
 const char* fragment_shader =
 "#version 400\n"
+"in vec3 color;"
 "out vec4 frag_colour;"
 "void main () {"
-"  frag_colour = vec4 (0.5, 1.0, 0.5, 1.0);"
+"  frag_colour = vec4 (color, 1.0);"
 "}";
 
 //-----------------------------------------------------------------------PROTOTYPES:
@@ -53,6 +66,9 @@ int main( int numArguments, char** arguments )
 	shaderProgram.use();
 	shaderProgram.setVec3VBO( "vp", points, 9 );
 	shaderProgram.enableVec3Attribute( "vp", ShaderProgram::gl_Vertex );
+
+	shaderProgram.setVec3VBO( "pop", colors, 9 );
+	shaderProgram.enableVec3Attribute( "pop", ShaderProgram::gl_Color );
 
 	while( ! renderer.shouldClose() ) {
 		// wipe the drawing surface clear
