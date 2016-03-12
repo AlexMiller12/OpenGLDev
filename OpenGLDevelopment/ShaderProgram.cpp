@@ -49,10 +49,13 @@ bool ShaderProgram::createVBO( string attributeName )
 bool ShaderProgram::compileShaders( const char* vertexSource,
 									const char* fragmentSource )
 {
+
+	handle = glCreateProgram();
+
 	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
 	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
 	glCompileShader( vertexShaderHandle );
-	
+
 	int succeeded;
 	glGetShaderiv( vertexShaderHandle, GL_COMPILE_STATUS, &succeeded );
 	if( ! succeeded )   return false; //TODO delete shader
@@ -64,8 +67,9 @@ bool ShaderProgram::compileShaders( const char* vertexSource,
 	glGetShaderiv( fragmentShaderHandle, GL_COMPILE_STATUS, &succeeded );
 	if( ! succeeded )   return false; //TODO delete shader
 
-	shaders.push_back( vertexShaderHandle );
-	shaders.push_back( fragmentShaderHandle );
+	glAttachShader( handle, vertexShaderHandle );
+	glAttachShader( handle, fragmentShaderHandle );
+
 	return true;
 
 }
@@ -96,16 +100,7 @@ bool ShaderProgram::enableVec3Attribute( string attributeName,
 }
 
 bool ShaderProgram::finalizeProgram()
-{
-
-	GLuint handle = glCreateProgram();
-
-	for( int i = 0; i < shaders.size(); i++ )
-	{
-		glAttachShader( handle, shaders[i] );
-		// TODO: delete shaders
-	}
-		
+{		
 	glLinkProgram( handle );
 
 	int succeeded;

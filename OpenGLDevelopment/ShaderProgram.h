@@ -45,7 +45,7 @@ private:
 	unordered_map<string, GLint> attributeLocations;
 	//unordered_map<string, GLint> attributeLocations;
 
-	vector<GLuint> shaders; 
+	//vector<GLuint> shaders; 
 
 	bool isVAOInitialized;
 	//unordered_map<string, GLint> samplerTextureNumbers;
@@ -70,7 +70,7 @@ public:
 
 
 	bool setVec3VBO( string attributeName, 
-					 float data[], 
+					 GLfloat data[], 
 					 int dataLength, 
 					 GLenum usage = GL_STATIC_DRAW );
 	void use();
