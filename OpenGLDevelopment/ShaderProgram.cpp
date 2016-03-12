@@ -23,8 +23,7 @@ ShaderProgram::~ShaderProgram()
 bool ShaderProgram::attatchShaders( const char* vertexSource,
 									const char* fragmentSource )
 {
-
-
+	bindToVAO();
 	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
 	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
 	glCompileShader( vertexShaderHandle );
@@ -53,7 +52,7 @@ bool ShaderProgram::bindToVAO()
 	return true;
 }
 
-bool ShaderProgram::createVBO( string attributeName )
+bool ShaderProgram::createVBO( string attributeName, GLuint attributeindex )
 {
 	// Bind to VAO so we assign new VBO to it
 	bindToVAO();
@@ -67,19 +66,21 @@ bool ShaderProgram::createVBO( string attributeName )
 	// Store handle for quick lookup later
 	attributeLocations[attributeName] = newVBOHandle;
 
+	attributeIndices[attributeName] = attributeindex;
+
 	// Assign it to "in vec3" variable in shader
-	glBindAttribLocation( handle, newVBOHandle, attributeName.c_str() );
+	glBindAttribLocation( handle, attributeindex, attributeName.c_str() );
 
 	return true;
 }
 
-bool ShaderProgram::enableVec3Attribute( string attributeName, 
-										 GLuint attributeindex )
+bool ShaderProgram::enableVec3Attribute( string attributeName )
 {
 	GLuint bufferHandle = getAttributeLocation( attributeName );
 	
+	GLuint attributeIndex = attributeIndices[attributeName]; //TODO check if there
 	// Enable attribute
-	glEnableVertexAttribArray( attributeindex );
+	glEnableVertexAttribArray( attributeIndex );
 
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
 
@@ -87,12 +88,12 @@ bool ShaderProgram::enableVec3Attribute( string attributeName,
 	int floatsPerVertex = 3;
 
 	// Tell GL how to handle data in buffer
-	glVertexAttribPointer( attributeindex,
+	glVertexAttribPointer( attributeIndex,
 						   floatsPerVertex, 
 						   GL_FLOAT, 
 						   GL_FALSE, // normalized?
 						   0,		 // stride 
-						   0 );      // array buffer offset
+						   (void*)0 );      // array buffer offset
 
 	//TODO falseonerror
 	return true;

@@ -46,7 +46,7 @@ private:
 
 	unordered_map<string, GLint> uniformLocations;
 	unordered_map<string, GLint> attributeLocations;
-	//unordered_map<string, GLint> attributeLocations;
+	unordered_map<string, GLint> attributeIndices;
 
 	//vector<GLuint> shaders; 
 
@@ -63,8 +63,8 @@ public:
 public:
 	bool attatchShaders( const char* vertexSource, const char* fragmentSource );
 	bool bindToVAO(); 
-	bool createVBO( string attributeName );
-	bool enableVec3Attribute( string attributeName, GLuint attributeindex );
+	bool createVBO( string attributeName, GLuint attributeindex );
+	bool enableVec3Attribute( string attributeName);
 
 	bool finalizeProgram();
 	GLuint getAttributeLocation( string name ); //TODO protected?

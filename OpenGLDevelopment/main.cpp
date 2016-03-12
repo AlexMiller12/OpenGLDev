@@ -144,25 +144,38 @@ const char* fragment_shader =
 "}";
 
 const char* vert2 =
-"in vec3 vertexPosition_modelspace;"
+"#version 450\n"
+"in vec3 inPos;"
 "void main(){"
-"gl_Position.xyz = vertexPosition_modelspace;"
+"gl_Position.xyz = inPos;"
 "gl_Position.w = 1.0;"
 "}";
 
 const char* frag2 =
-"out vec3 color;"
+"#version 450\n"
+"out vec4 color;"
 "void main(){"
-"color = vec3(1.0, 0.0, 0.0);"
+"color = vec4(1.0, 0.0, 0.0, 1.0);"
 "}";
 
 //-----------------------------------------------------------------------PROTOTYPES:
 
 void blarg();
+void tutorial();
 
 //-----------------------------------------------------------------------------MAIN:
 
 int main( int numArguments, char** arguments )
+{
+	blarg();
+	//tutorial();
+
+	return 0;
+}
+
+//------------------------------------------------------------------------FUNCTIONS:
+
+void blarg()
 {
 	Renderer renderer;
 	renderer.createWindow();
@@ -170,7 +183,7 @@ int main( int numArguments, char** arguments )
 
 	ShaderProgram shaderProgram;
 
-//	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
+	//	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
 	if( !shaderProgram.attatchShaders( vert2, frag2 ) )
 	{
 		printf( " oh now! " );
@@ -178,17 +191,18 @@ int main( int numArguments, char** arguments )
 	}
 
 	shaderProgram.bindToVAO();
+	shaderProgram.createVBO( "inPos", ShaderProgram::gl_Vertex );
+	shaderProgram.setVec3VBO( "inPos", (GLfloat*)g_vertex_buffer_data, 9 );
+	shaderProgram.enableVec3Attribute( "inPos" );
 
-	shaderProgram.createVBO( "in_position" );
-	shaderProgram.setVec3VBO( "in_position", (GLfloat*)g_vertex_buffer_data, 9 );
-	
-//	shaderProgram.finalizeProgram();
+	shaderProgram.finalizeProgram();
 
-	while( ! renderer.shouldClose() ) 
+	glClearColor( 0.0f, 0.0f, 0.4f, 0.0f );
+	while( ! renderer.shouldClose() )
 	{
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		shaderProgram.use();
 
-		shaderProgram.enableVec3Attribute( "in_position", ShaderProgram::gl_Vertex );
-		
 		/* Invoke glDrawArrays telling that our data is a line loop and we want to draw 4 vertices */
 		glDrawArrays( GL_TRIANGLES, 0, 3 );
 
@@ -197,21 +211,8 @@ int main( int numArguments, char** arguments )
 		// put the stuff we've been drawing onto the display
 		renderer.swapBuffers();
 	}
-
-	// close GL context and any other GLFW resources
 	renderer.unbind();
 	renderer.closeWindow();
-	return 0;
-}
-
-//------------------------------------------------------------------------FUNCTIONS:
-
-void blarg()
-{
-	// tell GL to only draw onto a pixel if the shape is closer to the viewer
-	glEnable( GL_DEPTH_TEST ); // enable depth-testing
-	glDepthFunc( GL_LESS ); // depth-testing interprets a smaller value as "closer"
-
 }
 
 bool readWholeFile( const char *fileName, std::string &ret_content )
@@ -237,4 +238,41 @@ bool readWholeFile( const char *fileName, std::string &ret_content )
 	}
 
 	return success;
+}
+
+void tutorial()
+{
+	Renderer renderer;
+	renderer.createWindow();
+	renderer.bind();
+	GLuint VertexArrayID;
+	glGenVertexArrays( 1, &VertexArrayID );
+	glBindVertexArray( VertexArrayID );
+
+	// This will identify our vertex buffer
+	GLuint vertexbuffer;
+	// Generate 1 buffer, put the resulting identifier in vertexbuffer
+	glGenBuffers( 1, &vertexbuffer );
+	// The following commands will talk about our 'vertexbuffer' buffer
+	glBindBuffer( GL_ARRAY_BUFFER, vertexbuffer );
+	// Give our vertices to OpenGL.
+	glBufferData( GL_ARRAY_BUFFER, sizeof( g_vertex_buffer_data ), g_vertex_buffer_data, GL_STATIC_DRAW );
+
+	while( !renderer.shouldClose() )
+	{
+		glEnableVertexAttribArray( 0 );
+		glBindBuffer( GL_ARRAY_BUFFER, vertexbuffer );
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+			);
+
+		// Draw the triangle !
+		glDrawArrays( GL_TRIANGLES, 0, 3 ); // Starting from vertex 0; 3 vertices total -> 1 triangle
+		glDisableVertexAttribArray( 0 );
+	}
 }
