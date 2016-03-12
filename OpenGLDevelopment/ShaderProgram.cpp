@@ -20,18 +20,63 @@ ShaderProgram::~ShaderProgram()
 
 //--------------------------------------------------------------------------METHODS:
 
+bool ShaderProgram::enableVec3Attribute( string attributeName, 
+										 GLuint attributeindex )
+{
+	GLuint bufferHandle = getAttributeLocation( attributeName );
+	
+	// Enable attribute
+	glEnableVertexAttribArray( attributeindex );
+
+	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
+
+	// Vec3 attributes have three floats per vertex
+	int floatsPerVertex = 3;
+
+	// Tell GL how to handle data in buffer
+	glVertexAttribPointer( attributeindex,
+						   floatsPerVertex, 
+						   GL_FLOAT, 
+						   GL_FALSE, 
+						   0, 0 );
+
+	//TODO falseonerror
+
+	return true;
+}
+
+// Returns the handle of the unifrom or attribute associated with given name
+GLuint ShaderProgram::getAttributeLocation( string name )
+{
+	// Look up the stored uniform location
+	GLuint attributeLocation = attributeLocations[name];
+
+	// If it has not yet been stored, we must query GL for location.  We don't 
+	// simply query every time because it is much more expensive than a simple 
+	// hash map lookup
+	if( ! attributeLocation )
+	{
+		// Query location
+		attributeLocation = glGetAttribLocation( handle, name.c_str() );
+
+		// Store for later use
+		attributeLocations[name] = attributeLocation;
+	}
+	return attributeLocation;
+}
 
 GLuint ShaderProgram::getHandle()
 {
 	return handle;
 }
 
+
 // Returns the handle of the unifrom or attribute associated with given name
-GLuint ShaderProgram::getLocation( string name )
+GLuint ShaderProgram::getUniformLocation( string name )
 {
 	// Look up the stored uniform location
-	GLuint uniformLocation = locations[name];
-
+	GLuint uniformLocation = uniformLocations[name];
+	
 	// If it has not yet been stored, we must query GL for location.  We don't 
 	// simply query every time because it is much more expensive than a simple 
 	// hash map lookup
@@ -41,44 +86,34 @@ GLuint ShaderProgram::getLocation( string name )
 		uniformLocation = glGetUniformLocation( handle, name.c_str() );
 
 		// Store for later use
-		locations[name] = uniformLocation;
+		uniformLocations[name] = uniformLocation;
 	}
 	return uniformLocation;
 }
-
 
 bool ShaderProgram::setVec3VBO( string attributeName, 
 								GLfloat data[], 
 								int dataLength, 
 								GLenum usage )
 {
-	if( ! locations[attributeName] )
+	if( ! attributeLocations[attributeName] )
 	{
 		createVBO( attributeName );
 	}
-
-	GLuint bufferHandle = getLocation( attributeName );
-
+	// Find handle to data buffer
+	GLuint bufferHandle = getAttributeLocation( attributeName );
+	// Bind to VAO so we assign new VBO to it
+	glBindVertexArray( vertexArrayObjectHandle );
+	// Bind to the VBO
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
-
+	// Set the data of the buffer
 	glBufferData( GL_ARRAY_BUFFER, 
 				  dataLength * sizeof( GLfloat ), 
 				  data, 
-				  usage );  
+				  usage );
 
-	// Vec3 attributes have three floats per vertex
-	int floatsPerVertex = 3;
-	
-	glVertexAttribPointer( bufferHandle,
-						   floatsPerVertex, 
-						   GL_FLOAT, 
-						   GL_FALSE, 
-						   0, 0 );
-
-	glEnableVertexAttribArray( bufferHandle );
 
 	//TODO return false on errors
-
 	return true;
 }	
 
@@ -112,7 +147,7 @@ bool ShaderProgram::createVBO( string attributeName )
 	//TODO return false on error
 
 	// Store handle for quick lookup later
-	locations[attributeName] = newVBOHandle;
+	attributeLocations[attributeName] = newVBOHandle;
 
 	return true;
 }
