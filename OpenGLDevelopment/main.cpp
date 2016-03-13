@@ -97,32 +97,53 @@ static const GLfloat cubeColor[] =
 	0.982f, 0.099f, 0.879f
 };
 
-/*float colors[] =
-{
-	1, 0, 0,
-	0, 1, 0,
-	0, 0, 1
-};*/
-/* We're going to create a simple diamond made from lines */
-const GLfloat diamond[12] = 
-{
-	 0.0, 1.0, 1.0, /* Top point */
-	 1.0, 0.0, 1.0, /* Right point */
-	 0.0, -1.0, 1.0, /* Bottom point */
-	 -1.0, 0.0, 1.0 }; /* Left point */
-
-const GLfloat colors[12] = 
-{
-	 1.0, 0.0, 0.0, /* Red */
-	 0.0, 1.0, 0.0, /* Green */
-	 0.0, 0.0, 1.0, /* Blue */
-	 1.0, 1.0, 1.0 }; /* White */
-
-const GLfloat g_vertex_buffer_data[] = {
-	- 1.0f, -1.0f, 0.0f,
-	  1.0f, -1.0f, 0.0f,
-	  0.0f, 1.0f, 0.0f,
-	};
+// 8 points, 24 elements
+GLfloat cube_vertices[] = {
+	// front
+	-1.0, -1.0, 1.0,
+	1.0, -1.0, 1.0,
+	1.0, 1.0, 1.0,
+	-1.0, 1.0, 1.0,
+	// back
+	-1.0, -1.0, -1.0,
+	1.0, -1.0, -1.0,
+	1.0, 1.0, -1.0,
+	-1.0, 1.0, -1.0,
+};
+// 8 points, 24 elements
+GLfloat cube_colors[] = {
+	// front colors
+	1.0, 0.0, 0.0,
+	0.0, 1.0, 0.0,
+	0.0, 0.0, 1.0,
+	1.0, 1.0, 1.0,
+	// back colors
+	1.0, 0.0, 0.0,
+	0.0, 1.0, 0.0,
+	0.0, 0.0, 1.0,
+	1.0, 1.0, 1.0,
+};
+// 12 faces, 36 elements
+GLushort cube_elements[] = {
+	// front
+	0, 1, 2,
+	2, 3, 0,
+	// top
+	1, 5, 6,
+	6, 2, 1,
+	// back
+	7, 6, 5,
+	5, 4, 7,
+	// bottom
+	4, 0, 3,
+	3, 7, 4,
+	// left
+	4, 5, 1,
+	1, 0, 4,
+	// right
+	3, 2, 6,
+	6, 7, 3,
+};
 
 const char* vert2 =
 "#version 450\n"
@@ -144,14 +165,18 @@ const char* frag2 =
 
 
 const char* vertex_shader =
+"#version 450\n"
+"uniform mat4 mvp;"
 "in vec3 in_position;"
 "in vec3 in_color;"
 
 "out vec3 ex_color;"
 
 "void main () {"
-"  ex_color = in_position;"
-"  gl_Position = vec4 (in_position, 1.0);"
+"  ex_color = in_color;"
+//"  ex_color =  (mvp * vec4(in_color, 1.0)).xyz;"
+"  gl_Position = mvp * vec4 (in_position, 1.0);"
+//"  gl_Position = vec4(in_position, 1.0);"
 "}";
 
 const char* fragment_shader =
@@ -166,14 +191,12 @@ const char* fragment_shader =
 //-----------------------------------------------------------------------PROTOTYPES:
 
 void blarg();
-void tutorial();
 
 //-----------------------------------------------------------------------------MAIN:
 
 int main( int numArguments, char** arguments )
 {
 	blarg();
-	//tutorial();
 
 	return 0;
 }
@@ -186,41 +209,51 @@ void blarg()
 	renderer.createWindow();
 	renderer.bind();
 
+	int screen_width = 640, screen_height = 480;
+	Camera camera( 45.0f, screen_width, screen_height, 0.1f, 100.0f );
+	camera.lookAt( vec3( 0, 5, -5 ), vec3( 0, 0, 0 ), vec3( 0, 0, 1 ) );
+	glm::mat4 mvp = camera.viewProjectionMatrix();
 
 	ShaderProgram shaderProgram;
-	shaderProgram.init( false );
+	shaderProgram.init( true );
 	//	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
 	if( !shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
 	{
-		printf( " oh now! " );
 		exit( 1 );
 	}
+	int numFaces = 12;
+	shaderProgram.setIndices( cube_elements, numFaces );
 
 	shaderProgram.createVBO( "in_position", ShaderProgram::gl_Vertex );
-	shaderProgram.setVec3VBO( "in_position", (GLfloat*)cube, 36 );
-	shaderProgram.enableVec3Attribute( "in_position" );
+	shaderProgram.setVec3VBO( "in_position", (GLfloat*)cube_vertices, 24 );
 	
 	shaderProgram.createVBO( "in_color", ShaderProgram::gl_Color );
-	shaderProgram.setVec3VBO( "in_color", (GLfloat*)cubeColor, 36 );
-	shaderProgram.enableVec3Attribute( "in_color" );
-	
-	//Camera camera( 45.0f, 1.0f, 0.1f, 100.0f );
-	//camera.lookAt( vec3( 1.5, 0, -5 ), vec3( 0, 0, 0 ), vec3( 0, 1, 0 ) );
-	//glm::mat4 blarg = camera.viewProjectionMatrix();
+	shaderProgram.setVec3VBO( "in_color", (GLfloat*)cube_colors, 24 );
+
+
 	//shaderProgram.setUniform( "mvp", camera.viewProjectionMatrix() );
 
+	/*glm::mat4 model = glm::translate( glm::mat4( 1.0f ), glm::vec3( 0.0, 0.0, -4.0 ) );
+	glm::mat4 view = glm::lookAt( glm::vec3( 0.0, 2.0, 0.0 ), glm::vec3( 0.0, 0.0, -4.0 ), glm::vec3( 0.0, 1.0, 0.0 ) );
+	glm::mat4 projection = glm::perspective( 45.0f, 1.0f*screen_width / screen_height, 0.1f, 10.0f );
+	glm::mat4 mvp = projection * view * model;
+	mvp = mat4( 1.0 );*/
 	shaderProgram.finalizeProgram();
 
+	shaderProgram.enableVec3Attribute( "in_position" );
+	shaderProgram.enableVec3Attribute( "in_color" );
+	shaderProgram.setUniform( "mvp", mvp );
+	
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-	//glEnable( GL_DEPTH_TEST );
-	//glDepthFunc( GL_LESS );
+	glEnable( GL_DEPTH_TEST );
+	glDepthFunc( GL_LESS );
 	while( ! renderer.shouldClose() )
 	{
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		shaderProgram.use();
 
 		/* Invoke glDrawArrays telling that our data is a line loop and we want to draw 4 vertices */
-		glDrawArrays( GL_TRIANGLES, 0, 36 );
+		glDrawElements( GL_TRIANGLES, 36 * sizeof(GLushort), GL_UNSIGNED_SHORT, 0 );
 
 		// update other events like input handling 
 		glfwPollEvents();
@@ -254,41 +287,4 @@ bool readWholeFile( const char *fileName, std::string &ret_content )
 	}
 
 	return success;
-}
-
-void tutorial()
-{
-	Renderer renderer;
-	renderer.createWindow();
-	renderer.bind();
-	GLuint VertexArrayID;
-	glGenVertexArrays( 1, &VertexArrayID );
-	glBindVertexArray( VertexArrayID );
-
-	// This will identify our vertex buffer
-	GLuint vertexbuffer;
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer
-	glGenBuffers( 1, &vertexbuffer );
-	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer( GL_ARRAY_BUFFER, vertexbuffer );
-	// Give our vertices to OpenGL.
-	glBufferData( GL_ARRAY_BUFFER, sizeof( g_vertex_buffer_data ), g_vertex_buffer_data, GL_STATIC_DRAW );
-
-	while( !renderer.shouldClose() )
-	{
-		glEnableVertexAttribArray( 0 );
-		glBindBuffer( GL_ARRAY_BUFFER, vertexbuffer );
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-			);
-
-		// Draw the triangle !
-		glDrawArrays( GL_TRIANGLES, 0, 3 ); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDisableVertexAttribArray( 0 );
-	}
 }

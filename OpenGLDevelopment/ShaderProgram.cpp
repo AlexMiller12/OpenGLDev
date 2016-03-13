@@ -43,6 +43,11 @@ bool ShaderProgram::attatchShaders( const char* vertexSource,
 
 }
 
+//bool ShaderProgram::bindToIndexBuffer()
+//{
+//	
+//}
+
 bool ShaderProgram::bindToVAO()
 {
 	glBindVertexArray( vertexArrayObjectHandle );
@@ -171,14 +176,18 @@ bool ShaderProgram::init( bool createIndexBuffer )
 	return true;
 }
 
-bool setIndices( int indices[], int numFaces )
+bool ShaderProgram::setIndices( GLushort indices[], int numFaces, GLenum usage )
 {
+	GLushort bufferSize = numFaces * 3 * sizeof( GLushort );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBufferHandle );
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, bufferSize, indices, usage );
 	return true;
 }
 
 
 bool ShaderProgram::setUniform( string uniformName, mat4 matrix )
 {
+	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniformMatrix4fv( uniformLocation, 1, GL_FALSE, &matrix[0][0] );
 	// TODO if debug mode return false on error

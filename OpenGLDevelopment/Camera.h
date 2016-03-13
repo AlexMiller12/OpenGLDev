@@ -17,9 +17,10 @@ class Camera
 	
 private:
 	float fov;
-	float aspect;
 	float nearClip;
 	float farClip;
+
+	uint width, height;
 
 	vec3 pos;
 	vec3 center;
@@ -33,7 +34,11 @@ private:
 		
 public:
 	Camera();
-	Camera( float fieldOfView, float aspectRatio, float nearClip, float farClip );
+	Camera( float fieldOfView, 
+			uint screenWidth, 
+			uint screenHeight, 
+			float nearClipPlane, 
+			float farClipPlane );
 	~Camera();
 
 //------------------------------------------------------------------------FUNCTIONS:

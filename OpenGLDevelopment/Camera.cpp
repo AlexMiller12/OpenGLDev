@@ -7,12 +7,14 @@ Camera::Camera()
 }
 
 Camera::Camera( float fieldOfView,
-				float aspectRatio, 
+				uint screenWidth, 
+				uint screenHeight,
 				float nearClipPlane, 
 				float farClipPlane )
 {
 	fov = fieldOfView;
-	aspect = aspectRatio;
+	width = screenWidth;
+	height = screenHeight;
 	nearClip = nearClipPlane;
 	farClip = farClipPlane;
 	calcProjection();
@@ -43,5 +45,6 @@ mat4 Camera::viewProjectionMatrix()
 
 void Camera::calcProjection()
 {
+	float aspect = 1.0f * width / height;
 	projection = glm::perspective( fov, aspect, nearClip, farClip );
 }

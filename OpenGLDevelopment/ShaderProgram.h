@@ -76,7 +76,7 @@ public:
 
 	bool setUniform( string uniformName, mat4 matrix );
 
-	bool setIndices( int indices[], int numFaces );
+	bool setIndices( GLushort indices[], int numFaces, GLenum usage = GL_STATIC_DRAW );
 
 	bool setVec3VBO( string attributeName,  
 					 GLfloat data[], 
