@@ -125,11 +125,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="WireFrameProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="WireFrameProgram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

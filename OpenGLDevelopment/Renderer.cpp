@@ -86,6 +86,8 @@ bool Renderer::shouldClose()
 
 void Renderer::swapBuffers()
 {
+	// update other events like input handling which tend to be done now
+	glfwPollEvents();
 	glfwSwapBuffers( window );
 }
 
