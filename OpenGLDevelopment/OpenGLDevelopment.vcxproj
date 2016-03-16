@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClInclude Include="BasicShaders.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="gumbo.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="WireFrameProgram.h" />
