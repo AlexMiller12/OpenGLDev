@@ -74,10 +74,19 @@ std::vector<GLushort> indices;
 //-----------------------------------------------------------------------PROTOTYPES:
 
 void setupCamera();
+void showCube();
 
 //-----------------------------------------------------------------------------MAIN:
 
 int main( int numArguments, char** arguments )
+{
+	showCube();
+	return 0;
+}
+
+//------------------------------------------------------------------------FUNCTIONS:
+
+void showCube()
 {
 	// We will get our data in vectors probably
 	vertices.assign( cube_vertices, cube_vertices + 24 );
@@ -87,13 +96,13 @@ int main( int numArguments, char** arguments )
 	// Init GL
 	renderer.createWindow();
 	renderer.bind();
-	
+
 	// Set up camera so we can get our projection matrix
 	setupCamera();
 
-	program.init();	
-	
-	while( ! renderer.shouldClose() )
+	program.init();
+
+	while( !renderer.shouldClose() )
 	{
 		// Pretend that these are changing each frame
 		program.updateVertexPositions( vertices );
@@ -107,10 +116,7 @@ int main( int numArguments, char** arguments )
 	}
 	renderer.unbind();
 	renderer.closeWindow();
-	return 0;
 }
-
-//------------------------------------------------------------------------FUNCTIONS:
 
 void setupCamera()
 {

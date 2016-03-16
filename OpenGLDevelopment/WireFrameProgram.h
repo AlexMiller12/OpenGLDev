@@ -19,9 +19,7 @@ private:
 
 		"void main () {"
 		"  ex_color = in_color;"
-		//"  ex_color =  (mvp * vec4(in_color, 1.0)).xyz;"
 		"  gl_Position = mvp * vec4 (in_position, 1.0);"
-		//"  gl_Position = vec4(in_position, 1.0);"
 		"}";
 
 	const char* fragment_shader =

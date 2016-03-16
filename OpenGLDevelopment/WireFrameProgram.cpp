@@ -31,7 +31,8 @@ bool WireFrameProgram::init()
 
 	shaderProgram.init( true );
 
-	if( ! shaderProgram.attatchShaders( vertex_shader, fragment_shader ) )
+	if( ! shaderProgram.attachShader( vertex_shader, GL_VERTEX_SHADER )  ||
+		! shaderProgram.attachShader( fragment_shader, GL_FRAGMENT_SHADER ) )
 	{
 		return false;
 	}

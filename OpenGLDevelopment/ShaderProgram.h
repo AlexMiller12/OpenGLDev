@@ -49,7 +49,7 @@ private:
 	unordered_map<string, GLint> attributeLocations;
 	unordered_map<string, GLint> attributeIndices;
 
-	//vector<GLuint> shaders; 
+	vector<GLuint> shaders;
 
 	//unordered_map<string, GLint> samplerTextureNumbers;
 
@@ -62,7 +62,9 @@ public:
 //--------------------------------------------------------------------------METHODS:
 
 public:
-	bool attatchShaders( const char* vertexSource, const char* fragmentSource );
+	bool attachShader( const char* source, GLenum type );
+	bool attachShaders( const char* vert, const char* frag );
+	
 	bool bindToVAO(); 
 	bool createVBO( string attributeName, GLuint attributeindex );
 	bool enableVec3Attribute( string attributeName);

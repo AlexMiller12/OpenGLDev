@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="QuadTessellatorProgram.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="WireFrameProgram.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="BasicShaders.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="gumbo.h" />
+    <ClInclude Include="QuadTessellatorProgram.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="WireFrameProgram.h" />

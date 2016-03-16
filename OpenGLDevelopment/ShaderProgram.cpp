@@ -16,9 +16,29 @@ ShaderProgram::~ShaderProgram()
 
 //--------------------------------------------------------------------------METHODS:
 
+bool ShaderProgram::attachShader( const char* source, GLenum type )
+{
+	bindToVAO();
+	GLuint shaderHandle = glCreateShader( type );
+	glShaderSource( shaderHandle, 1, &source, NULL );
+	glCompileShader( shaderHandle );
+
+	int succeeded;
+	glGetShaderiv( shaderHandle, GL_COMPILE_STATUS, &succeeded );
+	if( ! succeeded )   return false; 
+
+	glAttachShader( handle, shaderHandle );
+
+	// Save the handle to the shader so we can delete after linking 
+	// TODO: (or can we do it now?)
+	shaders.push_back( shaderHandle );
+
+	return true; //TODO return false on error
+}
+
 // Compiles and links a shader program from given sources. Returns true on success
-bool ShaderProgram::attatchShaders( const char* vertexSource,
-									const char* fragmentSource )
+bool ShaderProgram::attachShaders( const char* vertexSource,
+								   const char* fragmentSource )
 {
 	bindToVAO();
 	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
