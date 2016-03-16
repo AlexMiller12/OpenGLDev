@@ -44,5 +44,8 @@
     <ClInclude Include="WireFrameProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BasicShaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
