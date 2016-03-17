@@ -54,7 +54,6 @@ bool WireFrameProgram::init()
 	return true;
 }
 
-
 void WireFrameProgram::updateIndices( vector<GLushort> elements )
 {
 	setIndices( elements );

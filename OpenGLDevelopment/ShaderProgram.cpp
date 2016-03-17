@@ -266,7 +266,7 @@ bool ShaderProgram::setVec3VBO( string attributeName,
 								vector<GLfloat> data,
 								GLenum usage )
 {
-	return setVec3VBO( "Position", &data[0], data.size(), usage );
+	return setVec3VBO( attributeName, &data[0], data.size(), usage );
 }
 
 bool ShaderProgram::setVec3VBO( string attributeName, 
