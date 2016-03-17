@@ -204,6 +204,7 @@ void ShaderProgram::printErrors()
 
 bool ShaderProgram::setIndices( vector<GLushort> indices, GLenum usage )
 {
+	numIndices = indices.size();
 	return setIndices( &indices[0], indices.size(), usage );
 }
 

@@ -70,7 +70,7 @@ GLushort cube_elements[] = {
 
 Renderer renderer;
 Camera camera;
-WireFrameProgram program;
+WireFrameProgram wireFramProgram;
 QuadTessellatorProgram quadProgram;
 std::vector<GLfloat> vertices, colors;
 std::vector<GLushort> indices;
@@ -120,16 +120,20 @@ void showCube()
 	// Set up camera so we can get our projection matrix
 	setupCamera();
 
-	program.init();
+	if( ! wireFramProgram.init() )
+	{
+		exit( 1 );
+	}
 
 	while( ! renderer.shouldClose() )
 	{
+		wireFramProgram.use();
 		// Pretend that these are changing each frame
-		program.updateVertexPositions( vertices );
-		program.updateVertexColors( colors );
-		program.updateIndices( indices );
+		wireFramProgram.updateVertexPositions( vertices );
+		wireFramProgram.updateVertexColors( colors );
+		wireFramProgram.updateIndices( indices );
 
-		program.draw( camera.viewProjectionMatrix() );
+		wireFramProgram.draw( camera.viewProjectionMatrix() );
 
 		// put the stuff we've been drawing onto the display
 		renderer.swapBuffers();

@@ -38,20 +38,20 @@ public:
 //---------------------------------------------------------------------------FIELDS:
 public:
 
-private:
+protected:
 	// Program handle
 	GLuint handle;
 	// Handle to the vao to which we will account any vbos
 	GLuint vertexArrayObjectHandle;
 	GLuint indexBufferHandle;
+	int numIndices;
 
+private:
 	unordered_map<string, GLint> uniformLocations;
 	unordered_map<string, GLint> attributeLocations;
 	unordered_map<string, GLint> attributeIndices;
-
 	vector<GLuint> shaders;
 
-	int numIndices;
 
 	//unordered_map<string, GLint> samplerTextureNumbers;
 

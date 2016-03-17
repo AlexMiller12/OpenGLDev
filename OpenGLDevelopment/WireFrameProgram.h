@@ -3,7 +3,7 @@
 
 #include "ShaderProgram.h"
 
-class WireFrameProgram
+class WireFrameProgram : public ShaderProgram
 {
 
 //------------------------------------------------------------------------CONSTANTS:
@@ -33,11 +33,6 @@ private:
 //---------------------------------------------------------------------------FIELDS:
 
 private:
-	ShaderProgram shaderProgram;
-	GLfloat* positions;
-	GLfloat* colors;
-	GLushort* indices;
-	int numIndices;
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 
