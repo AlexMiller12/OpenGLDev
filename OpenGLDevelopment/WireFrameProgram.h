@@ -2,6 +2,7 @@
 #define WIRE_FRAME_PROG
 
 #include "ShaderProgram.h"
+#include "GLUtil.h"
 
 class WireFrameProgram : public ShaderProgram
 {

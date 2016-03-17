@@ -23,15 +23,15 @@
 // 8 points, 24 elements
 GLfloat cube_vertices[] = {
 	// front
-	-1.0, -1.0, 1.0,
-	1.0, -1.0, 1.0,
-	1.0, 1.0, 1.0,
-	-1.0, 1.0, 1.0,
+	-10.0, -10.0, 10.0,
+	10.0, -10.0, 10.0,
+	10.0, 10.0, 10.0,
+	-10.0, 10.0, 10.0,
 	// back
-	-1.0, -1.0, -1.0,
-	1.0, -1.0, -1.0,
-	1.0, 1.0, -1.0,
-	-1.0, 1.0, -1.0,
+	-10.0, -10.0, -10.0,
+	10.0, -10.0, -10.0,
+	10.0, 10.0, -10.0,
+	-10.0, 10.0, -10.0,
 };
 // 8 points, 24 elements
 GLfloat cube_colors[] = {
@@ -86,8 +86,8 @@ void showGumbo();
 
 int main( int numArguments, char** arguments )
 {
-	showCube();
-	//showGumbo();
+	//showCube();
+	showGumbo();
 	return 0;
 }
 
@@ -132,10 +132,9 @@ void showCube()
 		wireFramProgram.updateVertexPositions( vertices );
 		wireFramProgram.updateVertexColors( colors );
 		wireFramProgram.updateIndices( indices );
-
+		// Run program
 		wireFramProgram.draw( camera.viewProjectionMatrix() );
-
-		// put the stuff we've been drawing onto the display
+		// Display the framebuffer to which we just wrote
 		renderer.swapBuffers();
 	}
 	renderer.unbind();
@@ -158,9 +157,12 @@ void showGumbo()
 	}
 
 	vector<GLfloat> gumboControlPoints = makeGumbo();
-
+	quadProgram.use();
 	quadProgram.updateControlPoints( gumboControlPoints );
-	quadProgram.setUniform( "LightPosition", vec4( 0.25f, 0.25f, 1, 0 ) );
+	quadProgram.setUniform( "LightPosition", vec3( 0.25f, 0.25f, 1.0f ) );
+	/*GLuint lp = quadProgram.getAttributeLocation( "LightPosition" );
+	vec4 light( 0.25f, 0.25f, 1.0f, 0 );
+	glUniform3fv( lp, 1, &light.x );*/
 	quadProgram.setUniform( "AmbientMaterial", vec3( 0.04f ) );
 	quadProgram.setUniform( "SpecularMaterial", vec3( 0.5f ) );
 	quadProgram.setUniform( "DiffuseMaterial", vec3( 0, 0.75f, 0.75f ) );
@@ -171,12 +173,12 @@ void showGumbo()
 
 	while( ! renderer.shouldClose() )
 	{
+		quadProgram.use();
 		// Pretend that these are changing each frame
 		quadProgram.updateControlPoints( gumboControlPoints );
-
+		// Run program
 		quadProgram.draw( camera.viewMatrix(), camera.projectionMatrix() );
-
-		// put the stuff we've been drawing onto the display
+		// Display the framebuffer to which we just wrote
 		renderer.swapBuffers();
 	}
 	renderer.unbind();
@@ -186,8 +188,8 @@ void showGumbo()
 void setupCamera()
 {
 	int screen_width = 640, screen_height = 480;
-	camera = Camera( 45.0f, screen_width, screen_height, 0.1f, 100.0f );
-	vec3 camPos = vec3( 0, 0, -25 );
+	camera = Camera( 45.0f, screen_width, screen_height, 1.0f, 200.0f );
+	vec3 camPos = vec3( 30, 40, 50 );
 	vec3 lookAt = vec3( 0 );
 	vec3 up = vec3( 0, 1, 0 );
 	camera.lookAt( camPos, lookAt, up );

@@ -7,6 +7,7 @@
 #include "Dependencies\glfw\glfw3.h"
 #include "Dependencies\glm\glm.hpp"
 #include "Dependencies\glm\gtc\matrix_transform.hpp"
+#include "GLUtil.h"
 
 using namespace std;
 using namespace glm;
@@ -34,6 +35,9 @@ public:
 	const static GLint gl_MultiTexCoord5	= 13;
 	const static GLint gl_MultiTexCoord6	= 14;
 	const static GLint gl_MultiTexCoord7	= 15;
+	
+private:
+	const bool DEBUG = true;
 
 //---------------------------------------------------------------------------FIELDS:
 public:

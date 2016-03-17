@@ -17,11 +17,12 @@ void WireFrameProgram::draw( mat4 mvp )
 
 	// Pass in uniform mvp (setting it each frame prettending it changes)
 	setUniform( "mvp", mvp );
-
+	GLUtil::printErrors();
 	// Draw wireframe
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	// Draw call
 	glDrawElements( GL_TRIANGLES, numIndices * sizeof( GLushort ), GL_UNSIGNED_SHORT, 0 );
+	GLUtil::printErrors();
 }
 
 bool WireFrameProgram::init()

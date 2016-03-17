@@ -32,8 +32,7 @@ bool ShaderProgram::attachShader( const char* source, GLenum type )
 
 	glAttachShader( handle, shaderHandle );
 
-
-	return true; //TODO return false on error
+	return ! GLUtil::printErrors();
 }
 
 //bool ShaderProgram::bindToIndexBuffer()
@@ -44,6 +43,7 @@ bool ShaderProgram::attachShader( const char* source, GLenum type )
 bool ShaderProgram::bindToVAO()
 {
 	glBindVertexArray( vertexArrayObjectHandle );
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 
@@ -68,7 +68,7 @@ bool ShaderProgram::createVBO( string attributeName, GLuint attributeindex )
 	// Assign it to "in vec3" variable in shader
 	glBindAttribLocation( handle, attributeindex, attributeName.c_str() );
 
-	return true;
+	return ! GLUtil::printErrors();
 }
 
 // Enables an attribute pointer to buffer with given name
@@ -95,20 +95,19 @@ bool ShaderProgram::enableVec3Attribute( string attributeName )
 						   (void*)0 );      // array buffer offset
 
 	//TODO falseonerror
-	return true;
+	return GLUtil::isError();
 }
 
 bool ShaderProgram::finalizeProgram()
 {		
 	glLinkProgram( handle );
 
-	int succeeded;
-	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&succeeded );
 
 	// TODO go through shaders and detach and delete them
 	/*glDetachShader( geomFragProgram, fragShader );
 	glDeleteShader( geomShader );*/
-	return succeeded;
+
+	return ! GLUtil::printErrors();
 }
 
 // Returns the handle of the unifrom or attribute associated with given name
@@ -165,9 +164,8 @@ bool ShaderProgram::init( bool createIndexBuffer )
 	if( createIndexBuffer )
 	{
 		glGenBuffers( 1, &indexBufferHandle );
-		// TODO: return false on error
 	}
-	return true;
+	return ! GLUtil::printErrors();
 }
 
 void ShaderProgram::printErrors()
@@ -215,6 +213,8 @@ bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage
 	GLushort bufferSize = numIndices * sizeof( GLushort );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBufferHandle );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, bufferSize, indices, usage );
+
+	if( DEBUG )  return ! GLUtil::isError();
 	return true;
 }
 
@@ -223,7 +223,8 @@ bool ShaderProgram::setUniform( string uniformName, float value )
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniform1f( uniformLocation, value );
-	// TODO if debug mode return false on error
+
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 
@@ -232,7 +233,8 @@ bool ShaderProgram::setUniform( string uniformName, mat3 value )
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniformMatrix3fv( uniformLocation, 1, GL_FALSE, &value[0][0] );
-	// TODO if debug mode return false on error
+
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 
@@ -241,7 +243,8 @@ bool ShaderProgram::setUniform( string uniformName, mat4 value )
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniformMatrix4fv( uniformLocation, 1, GL_FALSE, &value[0][0] );
-	// TODO if debug mode return false on error
+
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 
@@ -250,7 +253,8 @@ bool ShaderProgram::setUniform( string uniformName, vec3 value )
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniform3f( uniformLocation, value.x, value.y, value.z );
-	// TODO if debug mode return false on error
+
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 
@@ -259,7 +263,8 @@ bool ShaderProgram::setUniform( string uniformName, vec4 value )
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniform4f( uniformLocation, value.x, value.y, value.z, value.w );
-	// TODO if debug mode return false on error
+
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 
@@ -292,7 +297,11 @@ bool ShaderProgram::setVec3VBO( string attributeName,
 				  dataLength * sizeof( GLfloat ), 
 				  data, 
 				  usage );
-	//TODO return false on errors if debug mode
+
+	if( DEBUG )  
+	{
+		return ! GLUtil::printErrors();
+	}
 	return true;
 }	
 
