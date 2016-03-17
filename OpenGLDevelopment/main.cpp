@@ -160,14 +160,21 @@ void showGumbo()
 	vector<GLfloat> gumboControlPoints = makeGumbo();
 
 	quadProgram.updateControlPoints( gumboControlPoints );
-	
+	quadProgram.setUniform( "LightPosition", vec4( 0.25f, 0.25f, 1, 0 ) );
+	quadProgram.setUniform( "AmbientMaterial", vec3( 0.04f ) );
+	quadProgram.setUniform( "SpecularMaterial", vec3( 0.5f ) );
+	quadProgram.setUniform( "DiffuseMaterial", vec3( 0, 0.75f, 0.75f ) );
+	quadProgram.setUniform( "Shininess", 50.0f );
+	quadProgram.setUniform( "AmbientMaterial", vec3() );
+	quadProgram.setUniform( "TessLevelInner", 6 );
+	quadProgram.setUniform( "TessLevelOuter", 6 );
 
 	while( ! renderer.shouldClose() )
 	{
 		// Pretend that these are changing each frame
 		quadProgram.updateControlPoints( gumboControlPoints );
 
-		quadProgram.draw( camera.viewProjectionMatrix() );
+		quadProgram.draw( camera.viewMatrix(), camera.projectionMatrix() );
 
 		// put the stuff we've been drawing onto the display
 		renderer.swapBuffers();
@@ -180,7 +187,10 @@ void setupCamera()
 {
 	int screen_width = 640, screen_height = 480;
 	camera = Camera( 45.0f, screen_width, screen_height, 0.1f, 100.0f );
-	camera.lookAt( vec3( 5, 0, -5 ), vec3( 0, 0, 0 ), vec3( 0, 1, 0 ) );
+	vec3 camPos = vec3( 0, 0, -25 );
+	vec3 lookAt = vec3( 0 );
+	vec3 up = vec3( 0, 1, 0 );
+	camera.lookAt( camPos, lookAt, up );
 }
 
 bool readWholeFile( const char *fileName, std::string &ret_content )

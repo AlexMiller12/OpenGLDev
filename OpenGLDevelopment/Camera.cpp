@@ -36,9 +36,20 @@ void Camera::lookAt( vec3 position, vec3 lookAt, vec3 cameraUp )
 	up = cameraUp;
 	view = glm::lookAt( pos, center, up );
 }
+
+mat4 Camera::projectionMatrix()
+{
+	return projection;
+}
+
+mat4 Camera::viewMatrix()
+{
+	return view;
+}
+
 mat4 Camera::viewProjectionMatrix()
 {	
-	return (projection * view);
+	return projection * view;
 }
 
 //--------------------------------------------------------------------------HELPERS:

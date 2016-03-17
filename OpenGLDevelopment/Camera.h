@@ -46,8 +46,11 @@ public:
 //--------------------------------------------------------------------------METHODS:
 
 public:
-	void lookAt( vec3 position, vec3 lookAt, vec3 up );
+	void lookAt( vec3 camPos, vec3 lookAt, vec3 up );
+	mat4 projectionMatrix();
+	mat4 viewMatrix();
 	mat4 viewProjectionMatrix();
+
 private:
 	void calcProjection();
 };

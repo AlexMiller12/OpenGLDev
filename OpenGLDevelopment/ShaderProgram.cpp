@@ -84,13 +84,14 @@ bool ShaderProgram::enableVec3Attribute( string attributeName )
 
 	// Vec3 attributes have three floats per vertex
 	int floatsPerVertex = 3;
+	GLsizei stride = floatsPerVertex * sizeof( float );
 
 	// Tell GL how to handle data in buffer
 	glVertexAttribPointer( attributeIndex,
 						   floatsPerVertex, 
 						   GL_FLOAT, 
 						   GL_FALSE, // normalized?
-						   0,		 // stride 
+						   stride,		 // stride 
 						   (void*)0 );      // array buffer offset
 
 	//TODO falseonerror

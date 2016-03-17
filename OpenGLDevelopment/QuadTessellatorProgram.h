@@ -4,7 +4,7 @@
 #include "BasicShaders.h"
 #include "ShaderProgram.h"
 
-class QuadTessellatorProgram
+class QuadTessellatorProgram : public ShaderProgram
 {
 	
 //----------------------------------------------------------------------------ENUMS:
@@ -16,20 +16,15 @@ class QuadTessellatorProgram
 private:
 	float innerTessellationLevel;
 	float outerTessellationLevel;
-
-	GLfloat* controlPoints;
-	GLushort* indices;
-
-	ShaderProgram program;
+	int numVertices;
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 		
 //--------------------------------------------------------------------------METHODS:
 
 public:
-	void draw( mat4 mvp );
+	void draw( mat4 modelView, mat4 projection );
 	bool init();
-	void updateIndices( vector<GLushort> indices );
 	void updateControlPoints( vector<GLfloat> controlPoints );
 
 };
