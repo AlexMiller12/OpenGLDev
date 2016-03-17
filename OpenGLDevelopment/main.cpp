@@ -86,8 +86,8 @@ void showGumbo();
 
 int main( int numArguments, char** arguments )
 {
-	//showCube();
-	showGumbo();
+	showCube();
+	//showGumbo();
 	return 0;
 }
 
@@ -150,18 +150,20 @@ void showGumbo()
 	if( ! quadProgram.init() )
 	{
 		printf( "blargblarg" );
+		exit( 1 );
 	}
 
 	vector<GLfloat> gumboControlPoints = makeGumbo();
 
 	quadProgram.updateControlPoints( gumboControlPoints );
+	
 
 	while( ! renderer.shouldClose() )
 	{
 		// Pretend that these are changing each frame
 		quadProgram.updateControlPoints( gumboControlPoints );
 
-		program.draw( camera.viewProjectionMatrix() );
+		quadProgram.draw( camera.viewProjectionMatrix() );
 
 		// put the stuff we've been drawing onto the display
 		renderer.swapBuffers();

@@ -51,6 +51,8 @@ private:
 
 	vector<GLuint> shaders;
 
+	int numIndices;
+
 	//unordered_map<string, GLint> samplerTextureNumbers;
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
@@ -77,12 +79,18 @@ public:
 
 	void printErrors();
 
+	bool setUniform( string uniformName, mat3 value );
 	bool setUniform( string uniformName, mat4 value );
 	bool setUniform( string uniformName, vec3 value );
 	bool setUniform( string uniformName, vec4 value );
 	bool setUniform( string uniformName, float value );
 
 	bool setIndices( GLushort indices[], int numFaces, GLenum usage = GL_STATIC_DRAW );
+	bool setIndices( vector<GLushort> indices, GLenum usage = GL_STATIC_DRAW );
+
+	bool setVec3VBO( string attributeName,  
+					 vector<GLfloat> data, 
+					 GLenum usage = GL_STATIC_DRAW );
 
 	bool setVec3VBO( string attributeName,  
 					 GLfloat data[], 

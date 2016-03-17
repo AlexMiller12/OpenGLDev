@@ -53,10 +53,9 @@ bool WireFrameProgram::init()
 void WireFrameProgram::updateIndices( vector<GLushort> elements )
 {
 	numIndices = elements.size();
-	int numFaces = numIndices / 3;
 	
 	indices = &elements[0];
-	shaderProgram.setIndices( indices, numFaces );
+	shaderProgram.setIndices( indices, numIndices );
 }
 
 void WireFrameProgram::updateVertexPositions( vector<GLfloat> vertexPositions )

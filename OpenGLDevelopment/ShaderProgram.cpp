@@ -201,21 +201,35 @@ void ShaderProgram::printErrors()
 	
 }
 
-bool ShaderProgram::setIndices( GLushort indices[], int numFaces, GLenum usage )
+
+bool ShaderProgram::setIndices( vector<GLushort> indices, GLenum usage )
 {
-	GLushort bufferSize = numFaces * 3 * sizeof( GLushort );
+	return setIndices( &indices[0], indices.size(), usage );
+}
+
+bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage )
+{
+	numIndices = indicesLen;
+	GLushort bufferSize = numIndices * sizeof( GLushort );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBufferHandle );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, bufferSize, indices, usage );
 	return true;
 }
-
-
 
 bool ShaderProgram::setUniform( string uniformName, float value )
 {
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
 	glUniform1f( uniformLocation, value );
+	// TODO if debug mode return false on error
+	return true;
+}
+
+bool ShaderProgram::setUniform( string uniformName, mat3 value )
+{
+	use();
+	GLuint uniformLocation = getUniformLocation( uniformName );
+	glUniformMatrix3fv( uniformLocation, 1, GL_FALSE, &value[0][0] );
 	// TODO if debug mode return false on error
 	return true;
 }
@@ -245,6 +259,13 @@ bool ShaderProgram::setUniform( string uniformName, vec4 value )
 	glUniform4f( uniformLocation, value.x, value.y, value.z, value.w );
 	// TODO if debug mode return false on error
 	return true;
+}
+
+bool ShaderProgram::setVec3VBO( string attributeName, 
+								vector<GLfloat> data,
+								GLenum usage )
+{
+	return setVec3VBO( "Position", &data[0], data.size(), usage );
 }
 
 bool ShaderProgram::setVec3VBO( string attributeName, 
