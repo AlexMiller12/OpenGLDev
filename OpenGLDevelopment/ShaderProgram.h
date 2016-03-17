@@ -63,9 +63,8 @@ public:
 
 public:
 	bool attachShader( const char* source, GLenum type );
-	bool attachShaders( const char* vert, const char* frag );
 	
-	bool bindToVAO(); 
+	bool bindToVAO(); // TODO private? 
 	bool createVBO( string attributeName, GLuint attributeindex );
 	bool enableVec3Attribute( string attributeName);
 
@@ -77,6 +76,7 @@ public:
 	bool init( bool createIndexBuffer );
 
 	bool setUniform( string uniformName, mat4 matrix );
+	bool setUniform( string uniformName, float value );
 
 	bool setIndices( GLushort indices[], int numFaces, GLenum usage = GL_STATIC_DRAW );
 

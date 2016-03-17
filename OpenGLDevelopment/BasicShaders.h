@@ -22,7 +22,7 @@ public:
 
 //------------------VERTEX SHADERS:
 
-const char* noMVP_v = 
+const char* BasicShaders::noMVP_v =
     "in vec4 Position;"
     "out vec3 vPosition;"
 

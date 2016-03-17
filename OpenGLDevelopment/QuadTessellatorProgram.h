@@ -2,6 +2,7 @@
 #define QUAD_TESS_PROG
 
 #include "BasicShaders.h"
+#include "ShaderProgram.h"
 
 class QuadTessellatorProgram
 {
@@ -12,12 +13,23 @@ class QuadTessellatorProgram
 	
 //---------------------------------------------------------------------------FIELDS:
 	
+private:
+	float innerTessellationLevel;
+	float outerTessellationLevel;
+
+	GLfloat* controlPoints;
+	GLushort* indices;
+
+	ShaderProgram program;
+
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 		
-//------------------------------------------------------------------------FUNCTIONS:
-
 //--------------------------------------------------------------------------METHODS:
 
+public:
+	bool init();
+	void updateIndices( vector<GLushort> indices );
+	void updateControlPoints( vector<GLfloat> controlPoints );
 
 };
 

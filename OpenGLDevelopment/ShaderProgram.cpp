@@ -1,6 +1,5 @@
 #include "ShaderProgram.h"
 
-
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 
 ShaderProgram::ShaderProgram()
@@ -34,33 +33,6 @@ bool ShaderProgram::attachShader( const char* source, GLenum type )
 	shaders.push_back( shaderHandle );
 
 	return true; //TODO return false on error
-}
-
-// Compiles and links a shader program from given sources. Returns true on success
-bool ShaderProgram::attachShaders( const char* vertexSource,
-								   const char* fragmentSource )
-{
-	bindToVAO();
-	GLuint vertexShaderHandle = glCreateShader( GL_VERTEX_SHADER );
-	glShaderSource( vertexShaderHandle, 1, &vertexSource, NULL );
-	glCompileShader( vertexShaderHandle );
-
-	int succeeded;
-	glGetShaderiv( vertexShaderHandle, GL_COMPILE_STATUS, &succeeded );
-	if( ! succeeded )   return false; //TODO delete shader
-	
-	GLuint fragmentShaderHandle = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fragmentShaderHandle, 1, &fragmentSource, NULL );
-	glCompileShader( fragmentShaderHandle );
-
-	glGetShaderiv( fragmentShaderHandle, GL_COMPILE_STATUS, &succeeded );
-	if( ! succeeded )   return false; //TODO delete shader
-
-	glAttachShader( handle, vertexShaderHandle );
-	glAttachShader( handle, fragmentShaderHandle );
-
-	return true;
-
 }
 
 //bool ShaderProgram::bindToIndexBuffer()
@@ -204,6 +176,16 @@ bool ShaderProgram::setIndices( GLushort indices[], int numFaces, GLenum usage )
 	return true;
 }
 
+
+
+bool ShaderProgram::setUniform( string uniformName, float value )
+{
+	use();
+	GLuint uniformLocation = getUniformLocation( uniformName );
+	glUniform1f( uniformLocation, value );
+	// TODO if debug mode return false on error
+	return true;
+}
 
 bool ShaderProgram::setUniform( string uniformName, mat4 matrix )
 {

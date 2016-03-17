@@ -28,7 +28,7 @@ void WireFrameProgram::draw( mat4 mvp )
 
 bool WireFrameProgram::init()
 {
-
+	// Initialize program with index buffer
 	shaderProgram.init( true );
 
 	if( ! shaderProgram.attachShader( vertex_shader, GL_VERTEX_SHADER )  ||

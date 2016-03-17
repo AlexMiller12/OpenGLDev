@@ -75,12 +75,14 @@ std::vector<GLushort> indices;
 
 void setupCamera();
 void showCube();
+void showGumbo();
 
 //-----------------------------------------------------------------------------MAIN:
 
 int main( int numArguments, char** arguments )
 {
 	showCube();
+	showGumbo();
 	return 0;
 }
 
@@ -118,12 +120,16 @@ void showCube()
 	renderer.closeWindow();
 }
 
+void showGumbo()
+{
+
+}
+
 void setupCamera()
 {
 	int screen_width = 640, screen_height = 480;
 	camera = Camera( 45.0f, screen_width, screen_height, 0.1f, 100.0f );
 	camera.lookAt( vec3( 5, 0, -5 ), vec3( 0, 0, 0 ), vec3( 0, 1, 0 ) );
-
 }
 
 bool readWholeFile( const char *fileName, std::string &ret_content )
