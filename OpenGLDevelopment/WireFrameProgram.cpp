@@ -22,8 +22,7 @@ void WireFrameProgram::draw( mat4 mvp )
 	// Draw wireframe
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	// Draw call
-	glDrawElements( GL_TRIANGLES, 36 * sizeof( GLushort ), GL_UNSIGNED_SHORT, 0 );
-
+	glDrawElements( GL_TRIANGLES, numIndices * sizeof( GLushort ), GL_UNSIGNED_SHORT, 0 );
 }
 
 bool WireFrameProgram::init()
@@ -53,7 +52,9 @@ bool WireFrameProgram::init()
 
 void WireFrameProgram::updateIndices( vector<GLushort> elements )
 {
-	int numFaces = elements.size() / 3;
+	numIndices = elements.size();
+	int numFaces = numIndices / 3;
+	
 	indices = &elements[0];
 	shaderProgram.setIndices( indices, numFaces );
 }

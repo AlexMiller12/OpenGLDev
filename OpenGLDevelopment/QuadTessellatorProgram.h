@@ -27,6 +27,7 @@ private:
 //--------------------------------------------------------------------------METHODS:
 
 public:
+	void draw( mat4 mvp );
 	bool init();
 	void updateIndices( vector<GLushort> indices );
 	void updateControlPoints( vector<GLfloat> controlPoints );

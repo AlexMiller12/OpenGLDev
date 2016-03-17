@@ -22,15 +22,16 @@ bool ShaderProgram::attachShader( const char* source, GLenum type )
 	glShaderSource( shaderHandle, 1, &source, NULL );
 	glCompileShader( shaderHandle );
 
+	// Save the handle to the shader so we can delete after linking 
+	// (Or for printing errors)
+	shaders.push_back( shaderHandle );
+	//TODO: only on debug mode
 	int succeeded;
 	glGetShaderiv( shaderHandle, GL_COMPILE_STATUS, &succeeded );
 	if( ! succeeded )   return false; 
 
 	glAttachShader( handle, shaderHandle );
 
-	// Save the handle to the shader so we can delete after linking 
-	// TODO: (or can we do it now?)
-	shaders.push_back( shaderHandle );
 
 	return true; //TODO return false on error
 }
@@ -104,9 +105,9 @@ bool ShaderProgram::finalizeProgram()
 	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&succeeded );
 
 	// TODO go through shaders and detach and delete them
-
-	if( ! succeeded )   return false;
-	return true;
+	/*glDetachShader( geomFragProgram, fragShader );
+	glDeleteShader( geomShader );*/
+	return succeeded;
 }
 
 // Returns the handle of the unifrom or attribute associated with given name
@@ -168,6 +169,38 @@ bool ShaderProgram::init( bool createIndexBuffer )
 	return true;
 }
 
+void ShaderProgram::printErrors()
+{
+	for( int i = 0; i < shaders.size(); i++ )
+	{
+		GLuint shaderHandle = shaders.at( i );
+		int status;
+		glGetShaderiv( shaderHandle, GL_COMPILE_STATUS, &status );
+		if( ! status )
+		{
+			GLint expectedLength = 0;
+			glGetShaderiv( shaderHandle, GL_INFO_LOG_LENGTH, &expectedLength );
+			vector<GLchar> errorLog( expectedLength );
+			GLsizei actualLength;
+			glGetShaderInfoLog( shaderHandle, expectedLength, &actualLength, &errorLog[0] );
+			printf( "Log:\n%s", &errorLog[0] );
+		}
+	}
+	int linkStatus;
+	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&linkStatus );
+	if( ! linkStatus )
+	{
+		GLint expectedLength = 0;
+		glGetProgramiv( handle, GL_INFO_LOG_LENGTH, &expectedLength );
+		vector<GLchar> errorLog( expectedLength );
+		GLsizei actualLength;
+		glGetProgramInfoLog( handle, expectedLength, &actualLength, &errorLog[0] );
+		printf( "Log:\n%s", &errorLog[0] );
+	}
+
+	
+}
+
 bool ShaderProgram::setIndices( GLushort indices[], int numFaces, GLenum usage )
 {
 	GLushort bufferSize = numFaces * 3 * sizeof( GLushort );
@@ -187,11 +220,29 @@ bool ShaderProgram::setUniform( string uniformName, float value )
 	return true;
 }
 
-bool ShaderProgram::setUniform( string uniformName, mat4 matrix )
+bool ShaderProgram::setUniform( string uniformName, mat4 value )
 {
 	use();
 	GLuint uniformLocation = getUniformLocation( uniformName );
-	glUniformMatrix4fv( uniformLocation, 1, GL_FALSE, &matrix[0][0] );
+	glUniformMatrix4fv( uniformLocation, 1, GL_FALSE, &value[0][0] );
+	// TODO if debug mode return false on error
+	return true;
+}
+
+bool ShaderProgram::setUniform( string uniformName, vec3 value )
+{
+	use();
+	GLuint uniformLocation = getUniformLocation( uniformName );
+	glUniform3f( uniformLocation, value.x, value.y, value.z );
+	// TODO if debug mode return false on error
+	return true;
+}
+
+bool ShaderProgram::setUniform( string uniformName, vec4 value )
+{
+	use();
+	GLuint uniformLocation = getUniformLocation( uniformName );
+	glUniform4f( uniformLocation, value.x, value.y, value.z, value.w );
 	// TODO if debug mode return false on error
 	return true;
 }

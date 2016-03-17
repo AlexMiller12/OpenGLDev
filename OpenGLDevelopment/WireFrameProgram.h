@@ -37,6 +37,7 @@ private:
 	GLfloat* positions;
 	GLfloat* colors;
 	GLushort* indices;
+	int numIndices;
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 

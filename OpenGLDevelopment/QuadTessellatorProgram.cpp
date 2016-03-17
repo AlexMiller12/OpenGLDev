@@ -4,22 +4,32 @@
 
 //--------------------------------------------------------------------------METHODS:
 
+void QuadTessellatorProgram::draw( mat4 mvp )
+{
+	program.use();
+}
+
 bool QuadTessellatorProgram::init()
 {
-	// Initialize program with index buffer
-	program.init( true );
+	// Initialize program without index buffer
+	program.init( false );
 
-	program.attachShader( BasicShaders::noMVP_v, GL_VERTEX_SHADER );
-	program.attachShader( BasicShaders::simple_tc, GL_TESS_CONTROL_SHADER );
-	program.attachShader( BasicShaders::simple_te, GL_TESS_EVALUATION_SHADER  );
-	program.attachShader( BasicShaders::simple_g, GL_GEOMETRY_SHADER );
-	program.attachShader( BasicShaders::lambert_f, GL_FRAGMENT_SHADER );
-
+	bool succeeded;
+	succeeded = program.attachShader( BasicShaders::noMVP_v, GL_VERTEX_SHADER );
+	if( ! succeeded )   program.printErrors();
+	succeeded = program.attachShader( BasicShaders::simple_tc, GL_TESS_CONTROL_SHADER );
+	if( ! succeeded ) 	program.printErrors();
+	succeeded = program.attachShader( BasicShaders::simple_te, GL_TESS_EVALUATION_SHADER );
+	if( ! succeeded ) 	program.printErrors();
+	succeeded = program.attachShader( BasicShaders::simple_g, GL_GEOMETRY_SHADER );
+	if( ! succeeded ) 	program.printErrors();
+	succeeded = program.attachShader( BasicShaders::lambert_f, GL_FRAGMENT_SHADER );
+	if( ! succeeded ) 	program.printErrors();
+	
 	program.createVBO( "Position", ShaderProgram::gl_Vertex );
-
-	program.finalizeProgram();
-
-	return true;
+	succeeded = program.finalizeProgram();
+	if( ! succeeded ) 	program.printErrors();
+	return succeeded;
 }
 
 void QuadTessellatorProgram::updateIndices( vector<GLushort> indices )

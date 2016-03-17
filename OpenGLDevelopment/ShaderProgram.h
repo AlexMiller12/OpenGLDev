@@ -75,7 +75,11 @@ public:
 
 	bool init( bool createIndexBuffer );
 
-	bool setUniform( string uniformName, mat4 matrix );
+	void printErrors();
+
+	bool setUniform( string uniformName, mat4 value );
+	bool setUniform( string uniformName, vec3 value );
+	bool setUniform( string uniformName, vec4 value );
 	bool setUniform( string uniformName, float value );
 
 	bool setIndices( GLushort indices[], int numFaces, GLenum usage = GL_STATIC_DRAW );

@@ -7,13 +7,16 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "Dependencies\glew\glew.h"
 #include "Dependencies\glfw\glfw3.h"
 
 #include "Renderer.h"
 #include "WireFrameProgram.h"
+#include "QuadTessellatorProgram.h"
 #include "Camera.h"
+#include "gumbo.h"
 
 //--------------------------------------------------------------------------GLOBALS:
 
@@ -68,11 +71,13 @@ GLushort cube_elements[] = {
 Renderer renderer;
 Camera camera;
 WireFrameProgram program;
+QuadTessellatorProgram quadProgram;
 std::vector<GLfloat> vertices, colors;
 std::vector<GLushort> indices;
 
 //-----------------------------------------------------------------------PROTOTYPES:
 
+vector<GLfloat> makeGumbo();
 void setupCamera();
 void showCube();
 void showGumbo();
@@ -81,12 +86,25 @@ void showGumbo();
 
 int main( int numArguments, char** arguments )
 {
-	showCube();
+	//showCube();
 	showGumbo();
 	return 0;
 }
 
 //------------------------------------------------------------------------FUNCTIONS:
+
+vector<GLfloat> makeGumbo()
+{
+	int numVertices = sizeof( PatchData ) / ( sizeof( float ) * 3 );
+	vector<GLfloat> controlPoints;
+	for( int vert = 0; vert < numVertices; vert++ )
+	{
+		controlPoints.push_back( PatchData[vert][0] ); // x
+		controlPoints.push_back( PatchData[vert][1] ); // y
+		controlPoints.push_back( PatchData[vert][2] ); // z
+	}
+	return controlPoints;
+}
 
 void showCube()
 {
@@ -104,7 +122,7 @@ void showCube()
 
 	program.init();
 
-	while( !renderer.shouldClose() )
+	while( ! renderer.shouldClose() )
 	{
 		// Pretend that these are changing each frame
 		program.updateVertexPositions( vertices );
@@ -122,7 +140,34 @@ void showCube()
 
 void showGumbo()
 {
+	// Init GL
+	renderer.createWindow();
+	renderer.bind();
 
+	// Set up camera so we can get our projection matrix
+	setupCamera();
+	
+	if( ! quadProgram.init() )
+	{
+		printf( "blargblarg" );
+	}
+
+	vector<GLfloat> gumboControlPoints = makeGumbo();
+
+	quadProgram.updateControlPoints( gumboControlPoints );
+
+	while( ! renderer.shouldClose() )
+	{
+		// Pretend that these are changing each frame
+		quadProgram.updateControlPoints( gumboControlPoints );
+
+		program.draw( camera.viewProjectionMatrix() );
+
+		// put the stuff we've been drawing onto the display
+		renderer.swapBuffers();
+	}
+	renderer.unbind();
+	renderer.closeWindow();
 }
 
 void setupCamera()
