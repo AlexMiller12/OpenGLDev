@@ -17,9 +17,7 @@ const char* BasicShaders::noMVP_v =
 const char* BasicShaders::simple_tc =
 	"#version 400\n"
 	"layout( vertices = 16 ) out;\n"
-
-	"#define ID gl_InvocationID"
-
+	
 	"in vec3 vPosition[];"
 	"out vec3 tcPosition[];"
 	"uniform float TessLevelInner;"
@@ -28,9 +26,9 @@ const char* BasicShaders::simple_tc =
 
 	"void main()"
 	"{"
-		"tcPosition[ID] = vPosition[ID];"
+		"tcPosition[gl_InvocationID] = vPosition[gl_InvocationID];"
 
-		"if( ID == 0 )"
+		"if( gl_InvocationID == 0 )"
 		"{"
 			"gl_TessLevelInner[0] = TessLevelInner;"
 			"gl_TessLevelInner[1] = TessLevelInner;"

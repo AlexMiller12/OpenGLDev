@@ -28,7 +28,7 @@ private:
 		"in vec3 ex_color;"
 		"out vec4 gl_FragColor;"
 		"void main () {"
-		"  gl_FragColor = vec4(ex_color, 1.0);"
+		"  gl_FragColor = vec4(ex_color + color_mod, 1.0);"
 		"}";
 
 //---------------------------------------------------------------------------FIELDS:

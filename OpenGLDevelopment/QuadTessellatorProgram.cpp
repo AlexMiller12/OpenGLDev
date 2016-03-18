@@ -12,7 +12,7 @@ void QuadTessellatorProgram::draw( mat4 modelView, mat4 projection )
 	enableVec3Attribute( "Position" );
 
 	setUniform( "Projection", projection );
-	setUniform( "Modelviews", modelView );
+	setUniform( "Modelview", modelView );
 	setUniform( "NormalMatrix", mat3( 1.0f ) );
 	//setUniform( "NormalMatrix", mat3( modelView ) );
 	GLUtil::printErrors();
