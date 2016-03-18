@@ -12,9 +12,9 @@ void QuadTessellatorProgram::draw( mat4 modelView, mat4 projection )
 	enableVec3Attribute( "Position" );
 
 	setUniform( "Projection", projection );
-	setUniform( "Modelview", modelView );
-	setUniform( "NormalMatrix", mat3( modelView ) );
-
+	setUniform( "Modelviews", modelView );
+	setUniform( "NormalMatrix", mat3( 1.0f ) );
+	//setUniform( "NormalMatrix", mat3( modelView ) );
 	GLUtil::printErrors();
 	glPatchParameteri( GL_PATCH_VERTICES, 16 );
 	glDrawArrays( GL_PATCHES, 0, numVertices );
@@ -28,11 +28,9 @@ bool QuadTessellatorProgram::init()
 	{
 		return false;
 	}
-
 	bool succeeded;
 	succeeded = attachShader( BasicShaders::noMVP_v, GL_VERTEX_SHADER );
 	if( ! succeeded )   return false;
-	
 	succeeded = attachShader( BasicShaders::simple_tc, GL_TESS_CONTROL_SHADER );
 	if( ! succeeded ) 	return false;
 	//succeeded = attachShader( BasicShaders::flat_te, GL_TESS_EVALUATION_SHADER );
@@ -52,8 +50,6 @@ bool QuadTessellatorProgram::init()
 								       3, -6,  3,  0, 
 									  -3,  3,  0,  0, 
 									   1,  0,  0,  0 );
-
-	use();
 
 	setUniform( "B", bezierBasisFunctions );
 	setUniform( "BT", transpose( bezierBasisFunctions ) );

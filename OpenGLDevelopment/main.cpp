@@ -155,10 +155,12 @@ void showGumbo()
 		printf( "blargblarg" );
 		exit( 1 );
 	}
+	
 
 	vector<GLfloat> gumboControlPoints = makeGumbo();
 	quadProgram.use();
 	quadProgram.updateControlPoints( gumboControlPoints );
+	quadProgram.setUniform( "AmbientMaterial", vec3( 0.04f ) );
 	quadProgram.setUniform( "LightPosition", vec3( 0.25f, 0.25f, 1.0f ) );
 	/*GLuint lp = quadProgram.getAttributeLocation( "LightPosition" );
 	vec4 light( 0.25f, 0.25f, 1.0f, 0 );

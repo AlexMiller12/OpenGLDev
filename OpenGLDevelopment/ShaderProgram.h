@@ -81,7 +81,8 @@ public:
 
 	bool init( bool createIndexBuffer );
 
-	void printErrors();
+	bool printProgramErrors();
+	bool printShaderErrors();
 
 	bool setUniform( string uniformName, mat3 value );
 	bool setUniform( string uniformName, mat4 value );

@@ -32,7 +32,8 @@ bool ShaderProgram::attachShader( const char* source, GLenum type )
 
 	glAttachShader( handle, shaderHandle );
 
-	return ! GLUtil::printErrors();
+	if( DEBUG )   return ! GLUtil::printErrors()  &&  ! printShaderErrors();
+	return true;
 }
 
 //bool ShaderProgram::bindToIndexBuffer()
@@ -102,19 +103,20 @@ bool ShaderProgram::finalizeProgram()
 {		
 	glLinkProgram( handle );
 
-
 	// TODO go through shaders and detach and delete them
-	/*glDetachShader( geomFragProgram, fragShader );
-	glDeleteShader( geomShader );*/
+	//		glDetachShader( geomFragProgram, fragShader );
+	//		glDeleteShader( geomShader );
 
-	return ! GLUtil::printErrors();
+
+	if( DEBUG )   return ! GLUtil::printErrors()  &&  ! printProgramErrors();
+	return true;
 }
 
-// Returns the handle of the unifrom or attribute associated with given name
+// Returns the handle of the attribute associated with given name
 GLuint ShaderProgram::getAttributeLocation( string name )
 {
 	// Look up the stored uniform location
-	GLuint attributeLocation = attributeLocations[name];
+	GLint attributeLocation = attributeLocations[name];
 
 	// If it has not yet been stored, we must query GL for location.  We don't 
 	// simply query every time because it is much more expensive than a simple 
@@ -124,6 +126,8 @@ GLuint ShaderProgram::getAttributeLocation( string name )
 		// Query location
 		attributeLocation = glGetAttribLocation( handle, name.c_str() );
 
+		if( attributeLocation == -1 )   GLUtil::printErrors();
+	
 		// Store for later use
 		attributeLocations[name] = attributeLocation;
 	}
@@ -139,7 +143,7 @@ GLuint ShaderProgram::getHandle()
 GLuint ShaderProgram::getUniformLocation( string name )
 {
 	// Look up the stored uniform location
-	GLuint uniformLocation = uniformLocations[name];
+	GLint uniformLocation = uniformLocations[name];
 	
 	// If it has not yet been stored, we must query GL for location.  We don't 
 	// simply query every time because it is much more expensive than a simple 
@@ -149,6 +153,15 @@ GLuint ShaderProgram::getUniformLocation( string name )
 		// Query location
 		uniformLocation = glGetUniformLocation( handle, name.c_str() );
 
+		if( uniformLocation == -1 )
+		{
+			printf( "Error setting uniform location for: %s.\nName does not "
+					"correspond to an active uniform variable in program, the "
+					"name starts with the reserved prefix 'gl_', or it is "
+					"associated with an atomic counter or a named uniform block.\n", 
+					name.c_str() );
+ 			return uniformLocation;
+		}
 		// Store for later use
 		uniformLocations[name] = uniformLocation;
 	}
@@ -159,16 +172,37 @@ GLuint ShaderProgram::getUniformLocation( string name )
 bool ShaderProgram::init( bool createIndexBuffer )
 {
 	handle = glCreateProgram();
+	if( DEBUG )  GLUtil::printErrors();
 	glGenVertexArrays( 1, &vertexArrayObjectHandle );
 	// TODO: return false on error
 	if( createIndexBuffer )
 	{
 		glGenBuffers( 1, &indexBufferHandle );
-	}
+	} 
 	return ! GLUtil::printErrors();
 }
 
-void ShaderProgram::printErrors()
+// Prints any program errors.  Returns true if there were errors
+bool ShaderProgram::printProgramErrors()
+{
+	int linkStatus;
+	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&linkStatus );
+	if( ! linkStatus )
+	{
+		GLint expectedLength = 0;
+		glGetProgramiv( handle, GL_INFO_LOG_LENGTH, &expectedLength );
+		vector<GLchar> errorLog( expectedLength );
+		GLsizei actualLength;
+		glGetProgramInfoLog( handle, expectedLength, &actualLength, &errorLog[0] );
+		printf( "Log:\n%s", &errorLog[0] );
+		return true;
+	}
+	// no errors
+	return false;
+}
+
+// Prints any shader errors.  Returns true if there were errors
+bool ShaderProgram::printShaderErrors()
 {
 	for( int i = 0; i < shaders.size(); i++ )
 	{
@@ -183,23 +217,12 @@ void ShaderProgram::printErrors()
 			GLsizei actualLength;
 			glGetShaderInfoLog( shaderHandle, expectedLength, &actualLength, &errorLog[0] );
 			printf( "Log:\n%s", &errorLog[0] );
+			return true;
 		}
 	}
-	int linkStatus;
-	glGetProgramiv( handle, GL_LINK_STATUS, (int *)&linkStatus );
-	if( ! linkStatus )
-	{
-		GLint expectedLength = 0;
-		glGetProgramiv( handle, GL_INFO_LOG_LENGTH, &expectedLength );
-		vector<GLchar> errorLog( expectedLength );
-		GLsizei actualLength;
-		glGetProgramInfoLog( handle, expectedLength, &actualLength, &errorLog[0] );
-		printf( "Log:\n%s", &errorLog[0] );
-	}
-
-	
+	// no errors
+	return false;
 }
-
 
 bool ShaderProgram::setIndices( vector<GLushort> indices, GLenum usage )
 {
