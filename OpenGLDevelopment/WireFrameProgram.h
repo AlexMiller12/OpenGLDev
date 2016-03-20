@@ -15,7 +15,6 @@ private:
 		"uniform mat4 mvp;"
 		"in vec3 in_position;"
 		"in vec3 in_color;"
-
 		"out vec3 ex_color;"
 
 		"void main () {"
@@ -28,7 +27,7 @@ private:
 		"in vec3 ex_color;"
 		"out vec4 gl_FragColor;"
 		"void main () {"
-		"  gl_FragColor = vec4(ex_color + color_mod, 1.0);"
+		"  gl_FragColor = vec4(ex_color, 1.0);"
 		"}";
 
 //---------------------------------------------------------------------------FIELDS:
@@ -42,7 +41,6 @@ private:
 public:
 	void draw( mat4 mvp );
 	bool init();
-	void updateIndices( vector<GLushort> indices );
 	void updateVertexPositions( vector<GLfloat> vertexPositions );
 	void updateVertexColors( vector<GLfloat> vertexColors );
 

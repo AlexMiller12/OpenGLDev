@@ -17,29 +17,29 @@ void QuadTessellatorProgram::draw( mat4 modelView, mat4 projection )
 	//setUniform( "NormalMatrix", mat3( modelView ) );
 	GLUtil::printErrors();
 	glPatchParameteri( GL_PATCH_VERTICES, 16 );
-	glDrawArrays( GL_PATCHES, 0, numVertices );
+	//glDrawArrays( GL_PATCHES, 0, numVertices );
+	glDrawElements( GL_PATCHES, 
+					numIndices * sizeof( GLushort ), 
+					GL_UNSIGNED_SHORT, 
+					0 );
 	GLUtil::printErrors();
 }
 
 bool QuadTessellatorProgram::init()
 {
 	// Initialize program without index buffer
-	if( ! ShaderProgram::init( false ) )
+	if( ! ShaderProgram::init( true ) )
 	{
 		return false;
 	}
-	bool succeeded;
-	succeeded = attachShader( BasicShaders::noMVP_v, GL_VERTEX_SHADER );
-	if( ! succeeded )   return false;
-	succeeded = attachShader( BasicShaders::simple_tc, GL_TESS_CONTROL_SHADER );
-	if( ! succeeded ) 	return false;
-	//succeeded = attachShader( BasicShaders::flat_te, GL_TESS_EVALUATION_SHADER );
-	succeeded = attachShader( BasicShaders::simple_te, GL_TESS_EVALUATION_SHADER );
-	if( ! succeeded ) 	return false;
-	succeeded = attachShader( BasicShaders::simple_g, GL_GEOMETRY_SHADER );
-	if( ! succeeded ) 	return false;
-	succeeded = attachShader( BasicShaders::lambert_f, GL_FRAGMENT_SHADER );
-	if( ! succeeded ) 	return false;
+	if( ! attachShader( BasicShaders::noMVP_v, GL_VERTEX_SHADER )			 ||
+		! attachShader( BasicShaders::simple_tc, GL_TESS_CONTROL_SHADER )	 ||
+		! attachShader( BasicShaders::simple_te, GL_TESS_EVALUATION_SHADER ) ||
+		! attachShader( BasicShaders::simple_g, GL_GEOMETRY_SHADER )		 ||
+		! attachShader( BasicShaders::lambert_f, GL_FRAGMENT_SHADER ) )
+	{ 
+		return false;
+	}
 
 	createVBO( "Position", ShaderProgram::gl_Vertex );
 

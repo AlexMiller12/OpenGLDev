@@ -55,11 +55,6 @@ bool WireFrameProgram::init()
 	return true;
 }
 
-void WireFrameProgram::updateIndices( vector<GLushort> elements )
-{
-	setIndices( elements );
-}
-
 void WireFrameProgram::updateVertexPositions( vector<GLfloat> vertexPositions )
 {
 	setVec3VBO( "in_position", vertexPositions );

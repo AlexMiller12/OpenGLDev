@@ -93,6 +93,17 @@ int main( int numArguments, char** arguments )
 
 //------------------------------------------------------------------------FUNCTIONS:
 
+vector<GLushort> makeGumboIndices()
+{
+	int numVertices = sizeof( PatchData ) / ( sizeof( float ) * 3 );
+	vector<GLushort> indices;
+	for( int i = 0; i < numVertices; i++ )
+	{
+		indices.push_back( i );
+	}
+	return indices;
+}
+
 vector<GLfloat> makeGumbo()
 {
 	int numVertices = sizeof( PatchData ) / ( sizeof( float ) * 3 );
@@ -131,7 +142,7 @@ void showCube()
 		// Pretend that these are changing each frame
 		wireFramProgram.updateVertexPositions( vertices );
 		wireFramProgram.updateVertexColors( colors );
-		wireFramProgram.updateIndices( indices );
+		wireFramProgram.setIndices( indices );
 		// Run program
 		wireFramProgram.draw( camera.viewProjectionMatrix() );
 		// Display the framebuffer to which we just wrote
@@ -158,6 +169,8 @@ void showGumbo()
 	
 
 	vector<GLfloat> gumboControlPoints = makeGumbo();
+	vector<GLushort> gumboIndices = makeGumboIndices();
+
 	quadProgram.use();
 	quadProgram.updateControlPoints( gumboControlPoints );
 	quadProgram.setUniform( "AmbientMaterial", vec3( 0.04f ) );
@@ -173,11 +186,13 @@ void showGumbo()
 	quadProgram.setUniform( "TessLevelInner", 6 );
 	quadProgram.setUniform( "TessLevelOuter", 6 );
 
+	
 	while( ! renderer.shouldClose() )
 	{
 		quadProgram.use();
 		// Pretend that these are changing each frame
 		quadProgram.updateControlPoints( gumboControlPoints );
+		quadProgram.setIndices( gumboIndices );
 		// Run program
 		quadProgram.draw( camera.viewMatrix(), camera.projectionMatrix() );
 		// Display the framebuffer to which we just wrote
