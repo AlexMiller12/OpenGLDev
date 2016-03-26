@@ -19,7 +19,6 @@ bool FullPatchProgram::init()
 
 	loadShaders();
 
-
 	if( ! finalizeProgram() )
 	{
 		return false;
@@ -42,7 +41,7 @@ void FullPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 bool FullPatchProgram::loadShaders()
 {
 
-	string vertSource, contSource, evalSource, fragSource;
+	string vertSource, contSource, evalSource, geomSource, fragSource;
 	string directory = IOUtil::executionPath() + "\\Shaders\\";
 
 	if( ! IOUtil::readWholeFile( directory + "no_mvp.vert", vertSource ) ||
@@ -58,6 +57,11 @@ bool FullPatchProgram::loadShaders()
 	}
 	if( ! IOUtil::readWholeFile( directory + "bspline.eval", evalSource ) ||
 		! attachShader( evalSource, GL_TESS_EVALUATION_SHADER ) )
+	{
+		return false;
+	}
+	if( ! IOUtil::readWholeFile( directory + "basic.geom", geomSource ) ||
+		! attachShader( geomSource, GL_GEOMETRY_SHADER ) )
 	{
 		return false;
 	}
