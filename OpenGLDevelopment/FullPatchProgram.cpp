@@ -52,7 +52,7 @@ bool FullPatchProgram::init()
 void FullPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
 	numVertices = newControlPoints.size();
-	setVec3VBO( "Position", newControlPoints );
+	setVec3VBO( "in_position", newControlPoints );
 }
 
 //--------------------------------------------------------------------------HELPERS:
