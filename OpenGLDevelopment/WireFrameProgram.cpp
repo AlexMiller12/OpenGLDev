@@ -21,7 +21,10 @@ void WireFrameProgram::draw( mat4 mvp )
 	// Draw wireframe
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 	// Draw call
-	glDrawElements( GL_TRIANGLES, numIndices * sizeof( GLushort ), GL_UNSIGNED_SHORT, 0 );
+	glDrawElements( GL_TRIANGLES, 
+					numIndices * sizeof( GLushort ), 
+					GL_UNSIGNED_SHORT, 
+					0 );
 	GLUtil::printErrors();
 }
 

@@ -1,19 +1,18 @@
-#ifndef QUAD_TESS_PROG
-#define QUAD_TESS_PROG
+#ifndef FULL_PATCH_PROG
+#define FULL_PATCH_PROG
 
 #include "BasicShaders.h"
 #include "ShaderProgram.h"
 
-class QuadTessellatorProgram : public ShaderProgram
+class FullPatchProgram : ShaderProgram
 {
 	
 //----------------------------------------------------------------------------ENUMS:
 	
 //------------------------------------------------------------------------CONSTANTS:
 	
-
 //---------------------------------------------------------------------------FIELDS:
-	
+
 private:
 	float innerTessellationLevel;
 	float outerTessellationLevel;
@@ -22,6 +21,8 @@ private:
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 		
+//------------------------------------------------------------------------FUNCTIONS:
+
 //--------------------------------------------------------------------------METHODS:
 
 public:

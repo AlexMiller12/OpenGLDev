@@ -1,33 +1,34 @@
-#ifndef QUAD_TESS_PROG
-#define QUAD_TESS_PROG
+#ifndef IO_UTIL
+#define IO_UTIL
 
-#include "BasicShaders.h"
-#include "ShaderProgram.h"
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <Windows.h> // To get execution path
 
-class QuadTessellatorProgram : public ShaderProgram
+using namespace std;
+
+class IOUtil
 {
 	
 //----------------------------------------------------------------------------ENUMS:
 	
 //------------------------------------------------------------------------CONSTANTS:
 	
+private:
+	static const int MAX_FILEPATH_LENGTH = 300;
 
 //---------------------------------------------------------------------------FIELDS:
 	
-private:
-	float innerTessellationLevel;
-	float outerTessellationLevel;
-	int numVertices;
-	int controlPointsPerPatch;
-
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 		
+//------------------------------------------------------------------------FUNCTIONS:
+
 //--------------------------------------------------------------------------METHODS:
 
 public:
-	void draw( mat4 modelView, mat4 projection );
-	bool init();
-	void updateControlPoints( vector<GLfloat> controlPoints );
+	static string executionPath();
+	static bool readWholeFile( const char* fileName, string& buffer );
 
 };
 

@@ -1,10 +1,10 @@
-#include "QuadTessellatorProgram.h"
+#include "FullPatchProgram.h"
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 
 //--------------------------------------------------------------------------METHODS:
 
-void QuadTessellatorProgram::draw( mat4 modelView, mat4 projection )
+void FullPatchProgram::draw( mat4 modelView, mat4 projection )
 {
 	use();
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -26,7 +26,7 @@ void QuadTessellatorProgram::draw( mat4 modelView, mat4 projection )
 	GLUtil::printErrors();
 }
 
-bool QuadTessellatorProgram::init()
+bool FullPatchProgram::init()
 {
 	// Initialize program without index buffer
 	if( ! ShaderProgram::init( true ) )
@@ -61,7 +61,7 @@ bool QuadTessellatorProgram::init()
 	return true;
 }
 
-void QuadTessellatorProgram::updateControlPoints( vector<GLfloat> newControlPoints )
+void FullPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
 	numVertices = newControlPoints.size();
 	setVec3VBO( "Position", newControlPoints );
