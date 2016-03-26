@@ -197,7 +197,6 @@ void showGumbo()
 	
 	while( ! renderer.shouldClose() )
 	{
-		quadProgram.use();
 		// Pretend that these are changing each frame
 		quadProgram.updateControlPoints( gumboControlPoints );
 		quadProgram.setIndices( gumboIndices );
@@ -223,6 +222,30 @@ void showGumboBSpline()
 	{
 		exit( 1 );
 	}
+
+	vector<GLfloat> gumboControlPoints = makeGumbo();
+	vector<GLushort> gumboIndices = makeGumboIndices();
+
+	patchProgram.use();
+	patchProgram.updateControlPoints( gumboControlPoints );
+
+	patchProgram.setUniform( "u_objectColor", vec3( 1.0f, 0, 0 ) );
+
+	patchProgram.setUniform( "u_tessLevelInner", 6 );
+	patchProgram.setUniform( "u_tessLevelOuter", 6 );
+
+	while( ! renderer.shouldClose() )
+	{
+		// Pretend that these are changing each frame
+		patchProgram.updateControlPoints( gumboControlPoints );
+		patchProgram.setIndices( gumboIndices );
+		// Run program
+		patchProgram.draw( camera.viewMatrix(), camera.projectionMatrix() );
+		// Display the framebuffer to which we just wrote
+		renderer.swapBuffers();
+	}
+	renderer.unbind();
+	renderer.closeWindow();
 }
 
 void setupCamera()

@@ -6,12 +6,22 @@ in vec3 in_vertexPositions[];
 
 out vec3 out_vertexPositions[];
 
-// uniform float TessLevelInner;
-// uniform float TessLevelOuter;
+uniform float u_tessLevelInner;
+uniform float u_tessLevelOuter;
 
 //------------------------------------------------------------------------MAIN:
 
 void main()
 {
 	out_vertexPositions[gl_InvocationID] = in_vertexPositions[gl_InvocationID];
+
+	if( gl_InvocationID == 0 )
+	{
+		gl_TessLevelInner[0] = u_tessLevelInner;
+		gl_TessLevelInner[1] = u_tessLevelInner;
+		gl_TessLevelOuter[0] = u_tessLevelOuter;
+		gl_TessLevelOuter[1] = u_tessLevelOuter;
+		gl_TessLevelOuter[2] = u_tessLevelOuter;
+		gl_TessLevelOuter[3] = u_tessLevelOuter;
+	}
 }

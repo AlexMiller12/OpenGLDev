@@ -6,7 +6,27 @@
 
 void FullPatchProgram::draw( mat4 modelView, mat4 projection )
 {
+
+	use();
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	enableVec3Attribute( "in_position" );
+	GLUtil::printErrors();
+
+	//setUniform( "u_modelView", modelView );
 	
+	setUniform( "u_mvp", projection * modelView );
+	
+	//setUniform( "u_modelRotation", mat3( 1.0 ) );
+	
+	glPatchParameteri( GL_PATCH_VERTICES, 16 );
+
+	glDrawElements( GL_PATCHES, 
+					numIndices * sizeof( GLushort ), 
+					GL_UNSIGNED_SHORT, 
+					0 );
+
+	GLUtil::printErrors();
 }
 
 bool FullPatchProgram::init()
@@ -18,6 +38,8 @@ bool FullPatchProgram::init()
 	}
 
 	loadShaders();
+
+	createVBO( "in_position", ShaderProgram::gl_Vertex );
 
 	if( ! finalizeProgram() )
 	{
@@ -49,7 +71,6 @@ bool FullPatchProgram::loadShaders()
 	{
 		return false;
 	}
-
 	if( ! IOUtil::readWholeFile( directory + "bspline.cont", contSource ) ||
 		! attachShader( contSource, GL_TESS_CONTROL_SHADER ) )
 	{
@@ -66,7 +87,7 @@ bool FullPatchProgram::loadShaders()
 		return false;
 	}
 	if( ! IOUtil::readWholeFile( directory + "basic_lighting.frag", fragSource ) ||
-		! attachShader( BasicShaders::lambert_f, GL_FRAGMENT_SHADER ) )
+		! attachShader( fragSource, GL_FRAGMENT_SHADER ) )
 	{
 		return false;
 	}

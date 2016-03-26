@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class FullPatchProgram : ShaderProgram
+class FullPatchProgram : public ShaderProgram
 {
 	
 //----------------------------------------------------------------------------ENUMS:

@@ -46,7 +46,8 @@ bool QuadTessellatorProgram::init()
 
 	if( ! finalizeProgram() ) 	return false;
 
-		
+	use();
+
 	mat4 bezierBasisFunctions = mat4( -1,  3, -3,  1, 
 								       3, -6,  3,  0, 
 									  -3,  3,  0,  0, 
@@ -63,6 +64,7 @@ bool QuadTessellatorProgram::init()
 
 void QuadTessellatorProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
+	use();
 	numVertices = newControlPoints.size();
 	setVec3VBO( "Position", newControlPoints );
 }
