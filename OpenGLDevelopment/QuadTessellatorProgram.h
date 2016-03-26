@@ -18,7 +18,7 @@ private:
 	float innerTessellationLevel;
 	float outerTessellationLevel;
 	int numVertices;
-	int controlPointsPerPatch;
+	int controlPointsPerPatch; //TODO
 
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 		

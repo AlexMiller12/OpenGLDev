@@ -177,6 +177,7 @@ void showGumbo()
 		exit( 1 );
 	}
 	
+	// Load Gumbo model data
 	vector<GLfloat> gumboControlPoints = makeGumbo();
 	vector<GLushort> gumboIndices = makeGumboIndices();
 
@@ -184,9 +185,6 @@ void showGumbo()
 	quadProgram.updateControlPoints( gumboControlPoints );
 	quadProgram.setUniform( "AmbientMaterial", vec3( 0.04f ) );
 	quadProgram.setUniform( "LightPosition", vec3( 0.25f, 0.25f, 1.0f ) );
-	/*GLuint lp = quadProgram.getAttributeLocation( "LightPosition" );
-	vec4 light( 0.25f, 0.25f, 1.0f, 0 );
-	glUniform3fv( lp, 1, &light.x );*/
 	quadProgram.setUniform( "AmbientMaterial", vec3( 0.04f ) );
 	quadProgram.setUniform( "SpecularMaterial", vec3( 0.5f ) );
 	quadProgram.setUniform( "DiffuseMaterial", vec3( 0, 0.75f, 0.75f ) );
@@ -228,9 +226,7 @@ void showGumboBSpline()
 
 	patchProgram.use();
 	patchProgram.updateControlPoints( gumboControlPoints );
-
 	patchProgram.setUniform( "u_objectColor", vec3( 1.0f, 0, 0 ) );
-
 	patchProgram.setUniform( "u_tessLevelInner", 6 );
 	patchProgram.setUniform( "u_tessLevelOuter", 6 );
 

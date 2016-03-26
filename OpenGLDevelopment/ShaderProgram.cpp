@@ -105,8 +105,8 @@ bool ShaderProgram::enableVec3Attribute( string attributeName )
 						   stride,		 // stride 
 						   (void*)0 );      // array buffer offset
 
-	//TODO falseonerror
-	return GLUtil::isError();
+	if( DEBUG )  return ! GLUtil::printErrors();
+	return true;
 }
 
 bool ShaderProgram::finalizeProgram()
@@ -247,7 +247,7 @@ bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBufferHandle );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, bufferSize, indices, usage );
 
-	if( DEBUG )  return ! GLUtil::isError();
+	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
 

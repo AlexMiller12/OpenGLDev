@@ -1,13 +1,13 @@
-#version 400
+#version 450
 
 //---------------------------------------------------------VARIABLES:
 
 in vec3 in_position;
-out vec3 out_position;
+out vec3 v_position;
 
 //--------------------------------------------------------------MAIN:
 
 void main()
 {
-	out_position = in_position;		
+	v_position = in_position;		
 };

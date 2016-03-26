@@ -1,4 +1,4 @@
-#version 400
+#version 450
 layout( quads ) in;
 
 // This function comes right out of the author's implementation
@@ -11,10 +11,10 @@ float TWO_THIRDS = 1.0 / 2.0;
 
 //---------------------------------------------------------VARIABLES:
 
-in vec3 in_vertexPositions[];
+in vec3 tc_vertexPositions[];
 
-out vec3 out_position;
-out vec3 out_normal;
+out vec3 te_position;
+out vec3 te_normal;
 
 uniform mat4 u_mvp;
 // uniform mat3 u_modelRotation;
@@ -30,8 +30,8 @@ void evaluateCubicBSpline( float u,
     float s = 1.0 - u;
 
 	float c0 = s * ( 0.5 * s );
-	float c1 = t * ( s + 0.5 * t ) + s * ( 0.5 * s + t );
-	float c2 = s * ( 0.5 * t );
+	float c1 = t * ( s + 0.5 * t )  +  s * ( 0.5 * s + t );
+	float c2 = t * ( 0.5 * t );
 
     basis[0] =	ONE_THIRD * s * c0;
 
@@ -53,20 +53,19 @@ void evaluateCubicBSpline( float u,
 
 void main()
 {
-	vec4 basis;
-	vec4 basisDerivitive;
-
-	evaluateCubicBSpline( gl_TessCoord.x, basis, basisDerivitive );
-
+	vec4 basis = vec4(0);
+	vec4 basisDerivitive = vec4(0);
 	vec3 cpBasis[4] = vec3[]( vec3(0), vec3(0), vec3(0), vec3(0) );
 	vec3 cpBasisDerivitive[4] = vec3[]( vec3(0), vec3(0), vec3(0), vec3(0) );
 
+
+	evaluateCubicBSpline( gl_TessCoord.x, basis, basisDerivitive );
+
 	for( int i = 0; i < 4; i++ )
 	{
-		// cpBasis[i] = vec3(); TODO ?
 		for( int j = 0; j < 4; j++ )
 		{
-			vec3 controlPoint = in_vertexPositions[ 4 * i + j];
+			vec3 controlPoint = tc_vertexPositions[ 4 * i + j];
 			cpBasis[i] += controlPoint * basis[j];
 			cpBasisDerivitive[i] += controlPoint * basisDerivitive[j];
 		}
@@ -86,7 +85,7 @@ void main()
 	}
 	vec3 normal = normalize( cross( biTangent, tangent ) );
 
-	out_normal = normal; //TODO multiply by model mat
-	out_position = worldPos;
+	te_normal = normal; //TODO multiply by model mat
+	te_position = worldPos;
 	gl_Position = u_mvp * vec4( worldPos, 1.0 );
 }

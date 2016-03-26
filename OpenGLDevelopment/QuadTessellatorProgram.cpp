@@ -47,7 +47,6 @@ bool QuadTessellatorProgram::init()
 	if( ! finalizeProgram() ) 	return false;
 
 	use();
-
 	mat4 bezierBasisFunctions = mat4( -1,  3, -3,  1, 
 								       3, -6,  3,  0, 
 									  -3,  3,  0,  0, 
