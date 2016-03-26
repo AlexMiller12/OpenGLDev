@@ -15,9 +15,12 @@
 #include "Renderer.h"
 #include "WireFrameProgram.h"
 #include "QuadTessellatorProgram.h"
+#include "FullPatchProgram.h"
 #include "Camera.h"
 #include "gumbo.h"
 #include "IOUtil.h"
+
+using namespace std;
 
 //--------------------------------------------------------------------------GLOBALS:
 
@@ -26,6 +29,7 @@ Renderer renderer;
 Camera camera;
 WireFrameProgram wireFramProgram;
 QuadTessellatorProgram quadProgram;
+FullPatchProgram patchProgram;
 std::vector<GLfloat> vertices, colors;
 std::vector<GLushort> indices;
 
@@ -35,17 +39,15 @@ vector<GLfloat> makeGumbo();
 void setupCamera();
 void showCube();
 void showGumbo();
+void showGumboBSpline();
 
 //-----------------------------------------------------------------------------MAIN:
 
 int main( int numArguments, char** arguments )
 {
-	std::string executionDirectory = IOUtil::executionPath() + "\\";
-	std::string filePath = executionDirectory + "Shaders\\blarg.txt";
-	std::string blargFile;
-	IOUtil::readWholeFile( filePath.c_str(), blargFile );
 	//showCube();
 	//showGumbo();
+	showGumboBSpline();
 	return 0;
 }
 
@@ -172,7 +174,6 @@ void showGumbo()
 	
 	if( ! quadProgram.init() )
 	{
-		printf( "blargblarg" );
 		exit( 1 );
 	}
 	
@@ -211,7 +212,17 @@ void showGumbo()
 
 void showGumboBSpline()
 {
+	// Init GL
+	renderer.createWindow();
+	renderer.bind();
 
+	// Set up camera so we can get our projection matrix
+	setupCamera();
+
+	if( ! patchProgram.init() )
+	{
+		exit( 1 );
+	}
 }
 
 void setupCamera()

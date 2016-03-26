@@ -28,12 +28,22 @@ bool ShaderProgram::attachShader( const char* source, GLenum type )
 	//TODO: only on debug mode
 	int succeeded;
 	glGetShaderiv( shaderHandle, GL_COMPILE_STATUS, &succeeded );
-	if( ! succeeded )   return false; 
+	if( !succeeded )
+	{
+		printShaderErrors();
+		GLUtil::printErrors();
+		return false;
+	}
 
 	glAttachShader( handle, shaderHandle );
 
 	if( DEBUG )   return ! GLUtil::printErrors()  &&  ! printShaderErrors();
 	return true;
+}
+
+bool ShaderProgram::attachShader( string source, GLenum type )
+{
+	return attachShader( source.c_str(), type );
 }
 
 //bool ShaderProgram::bindToIndexBuffer()

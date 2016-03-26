@@ -69,6 +69,7 @@ public:
 
 public:
 	bool attachShader( const char* source, GLenum type );
+	bool attachShader( string source, GLenum type );
 	
 	bool bindToVAO(); // TODO private? 
 	bool createVBO( string attributeName, GLuint attributeindex );

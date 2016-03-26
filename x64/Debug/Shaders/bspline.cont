@@ -1,0 +1,19 @@
+#version 400
+
+//---------------------------------------------------------VARIABLES:
+
+in vec3 in_vertexPositions[];
+
+out vec3 out_vertexPositions[];
+
+// uniform float TessLevelInner;
+// uniform float TessLevelOuter;
+
+//--------------------------------------------------------------MAIN:
+
+void main()
+{
+	int id = gl_InvocationID;
+
+	out_vertexPositions[id] = in_vertexPositions[id];
+}

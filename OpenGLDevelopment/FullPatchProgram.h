@@ -3,6 +3,9 @@
 
 #include "BasicShaders.h"
 #include "ShaderProgram.h"
+#include "IOUtil.h"
+
+using namespace std;
 
 class FullPatchProgram : ShaderProgram
 {
@@ -30,6 +33,8 @@ public:
 	bool init();
 	void updateControlPoints( vector<GLfloat> controlPoints );
 
+private:
+	bool loadShaders();
 };
 
 #endif

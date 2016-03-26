@@ -29,6 +29,7 @@ private:
 public:
 	static string executionPath();
 	static bool readWholeFile( const char* fileName, string& buffer );
+	static bool readWholeFile( string fileName, string& buffer );
 
 };
 

@@ -31,4 +31,9 @@ bool IOUtil::readWholeFile( const char* fileName, string& buffer )
 	return true;
 }
 
+bool IOUtil::readWholeFile( string fileName, string& buffer )
+{
+	return readWholeFile( fileName.c_str(), buffer );
+}
+
 //--------------------------------------------------------------------------HELPERS:
