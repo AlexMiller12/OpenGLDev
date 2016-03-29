@@ -15,7 +15,7 @@ void QuadTessellatorProgram::draw( mat4 modelView, mat4 projection )
 	setUniform( "Modelview", modelView );
 	setUniform( "NormalMatrix", mat3( 1.0f ) );
 	//setUniform( "NormalMatrix", mat3( modelView ) );
-	GLUtil::printErrors();
+
 	glPatchParameteri( GL_PATCH_VERTICES, 16 );
 
 	glDrawElements( GL_PATCHES, 

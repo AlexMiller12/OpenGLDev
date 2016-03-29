@@ -27,14 +27,11 @@ void FullPatchProgram::draw( mat4 modelView, mat4 projection )
 
 bool FullPatchProgram::init()
 {
-	// Initialize program without index buffer
-	if( ! ShaderProgram::init( true ) )
+	// Initialize program without index buffer and load shaders
+	if( ! ShaderProgram::init( true )  ||  ! loadShaders() )
 	{
 		return false;
-	}
-
-	loadShaders();
-	
+	}	
 	createVBO( "in_position", ShaderProgram::gl_Vertex );
 
 	if( ! finalizeProgram() )
@@ -44,6 +41,8 @@ bool FullPatchProgram::init()
 
 	use();
 	glEnable( GL_DEPTH_TEST );
+	glEnable( GL_CULL_FACE );
+	glCullFace( GL_FRONT );
 	glClearColor( 0.7f, 0.6f, 0.5f, 1.0f );
 
 	return true;
@@ -51,6 +50,7 @@ bool FullPatchProgram::init()
 
 void FullPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
+	use();
 	numVertices = newControlPoints.size();
 	setVec3VBO( "in_position", newControlPoints );
 }
@@ -73,8 +73,7 @@ bool FullPatchProgram::loadShaders()
 	{
 		return false;
 	}
-	//if( ! IOUtil::readWholeFile( directory + "bspline.eval", evalSource ) ||
-	if( ! IOUtil::readWholeFile( directory + "flat.eval", evalSource ) ||
+	if( ! IOUtil::readWholeFile( directory + "bspline.eval", evalSource ) ||
 		! attachShader( evalSource, GL_TESS_EVALUATION_SHADER ) )
 	{
 		return false;

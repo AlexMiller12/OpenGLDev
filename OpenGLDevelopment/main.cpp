@@ -46,7 +46,7 @@ void showGumboBSpline();
 int main( int numArguments, char** arguments )
 {
 	//showCube();
-	//showGumbo();
+	showGumbo();
 	showGumboBSpline();
 	return 0;
 }
@@ -248,8 +248,8 @@ void setupCamera()
 {
 	int screen_width = 640, screen_height = 480;
 	camera = Camera( 45.0f, screen_width, screen_height, 1.0f, 200.0f );
-	vec3 camPos = vec3( 35, -35, 45 );
-	vec3 lookAt = vec3( 0 );
+	vec3 camPos = vec3( -30, -10, 20 );
+	vec3 lookAt = vec3( 15, 19, 0 );
 	vec3 up = vec3( 0.2, 0.2, 2 );
 	camera.lookAt( camPos, lookAt, up );
 }

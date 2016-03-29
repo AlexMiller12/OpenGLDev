@@ -7,7 +7,7 @@ layout( quads ) in;
 //---------------------------------------------------------CONSTANTS:
 
 float ONE_THIRD = 1.0 / 3.0;
-float TWO_THIRDS = 1.0 / 2.0;
+float TWO_THIRDS = 2.0 / 3.0;
 
 //---------------------------------------------------------VARIABLES:
 
@@ -18,7 +18,6 @@ out vec3 te_normal;
 
 uniform mat4 u_mvp;
 // uniform mat3 u_modelRotation;
-
 
 //-----------------------------------------------------------HELPERS:
 
@@ -55,10 +54,10 @@ void main()
 {
 	vec4 basis = vec4(0);
 	vec4 basisDerivitive = vec4(0);
-	vec3 cpBasis[4] = vec3[]( vec3(0), vec3(0), vec3(0), vec3(0) );
-	vec3 cpBasisDerivitive[4] = vec3[]( vec3(0), vec3(0), vec3(0), vec3(0) );
+	vec3 cpXBasis[4] = vec3[]( vec3(0), vec3(0), vec3(0), vec3(0) );
+	vec3 cpXBasisDerivitive[4] = vec3[]( vec3(0), vec3(0), vec3(0), vec3(0) );
 
-
+	// get control point basis for the x component of texture coordinate
 	evaluateCubicBSpline( gl_TessCoord.x, basis, basisDerivitive );
 
 	for( int i = 0; i < 4; i++ )
@@ -66,11 +65,11 @@ void main()
 		for( int j = 0; j < 4; j++ )
 		{
 			vec3 controlPoint = tc_vertexPositions[ 4 * i + j];
-			cpBasis[i] += controlPoint * basis[j];
-			cpBasisDerivitive[i] += controlPoint * basisDerivitive[j];
+			cpXBasis[i] += controlPoint * basis[j];
+			cpXBasisDerivitive[i] += controlPoint * basisDerivitive[j];
 		}
 	}
-
+	// control point basis for the y component of texture coordinate
 	evaluateCubicBSpline( gl_TessCoord.y, basis, basisDerivitive );
 
 	vec3 worldPos = vec3( 0 );
@@ -79,9 +78,9 @@ void main()
 
 	for( int i = 0; i < 4; i++ )
 	{
-		worldPos += basis[i] * cpBasis[i];
-		tangent += basis[i] * cpBasisDerivitive[i];
-		biTangent += basisDerivitive[i] * cpBasis[i];
+		worldPos += basis[i] * cpXBasis[i];
+		tangent += basis[i] * cpXBasisDerivitive[i];
+		biTangent += basisDerivitive[i] * cpXBasis[i];
 	}
 	vec3 normal = normalize( cross( biTangent, tangent ) );
 
