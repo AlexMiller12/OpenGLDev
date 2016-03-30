@@ -2,9 +2,9 @@
 
 //---------------------------------------------------------VARIABLES:
 
-in vec3 g_normal;
 in vec3 g_triangleDistance;
 in vec3 g_patchDistance;
+in vec3 g_normal;
 
 out vec4 out_fragColor;
 
@@ -27,6 +27,6 @@ void main()
 
 	vec3 specular = vec3( 1.0 ) * 0.9 * pow( normal.z, 64 );
 	// vec4 dumbColor = vec4( ambient + diffuse + specular, 1.0 ) * vec4(0);
-	out_fragColor = vec4( ambient + diffuse + specular, 1.0 );
-	 // out_fragColor = vec4(g_normal, 1);
+	// out_fragColor = vec4( ambient + diffuse + specular, 1.0 );
+	out_fragColor = vec4(g_normal, 1);
 }

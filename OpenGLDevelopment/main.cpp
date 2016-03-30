@@ -46,7 +46,7 @@ void showGumboBSpline();
 int main( int numArguments, char** arguments )
 {
 	//showCube();
-	showGumbo();
+	//showGumbo();
 	showGumboBSpline();
 	return 0;
 }
@@ -227,8 +227,8 @@ void showGumboBSpline()
 	patchProgram.use();
 	patchProgram.updateControlPoints( gumboControlPoints );
 	patchProgram.setUniform( "u_objectColor", vec3( 1.0f, 0, 0 ) );
-	patchProgram.setUniform( "u_tessLevelInner", 6 );
-	patchProgram.setUniform( "u_tessLevelOuter", 6 );
+	patchProgram.setUniform( "u_tessLevelInner", 1 );
+	patchProgram.setUniform( "u_tessLevelOuter", 1 );
 
 	while( ! renderer.shouldClose() )
 	{

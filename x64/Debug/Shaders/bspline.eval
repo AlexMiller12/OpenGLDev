@@ -1,5 +1,7 @@
 #version 450
 layout( quads ) in;
+//layout(triangles, equal_spacing, cw) in;
+
 
 // This function comes right out of the author's implementation
 // It's a B-spline basis evaluation via deBoor pyramid
@@ -84,7 +86,8 @@ void main()
 	}
 	vec3 normal = normalize( cross( biTangent, tangent ) );
 
-	te_normal = normal; //TODO multiply by model mat
+	// te_normal = normal; //TODO multiply by model mat
+	te_normal = gl_TessCoord;
 	te_position = worldPos;
 	gl_Position = u_mvp * vec4( worldPos, 1.0 );
 }
