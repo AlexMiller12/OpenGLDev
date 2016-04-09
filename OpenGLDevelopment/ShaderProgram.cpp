@@ -74,7 +74,10 @@ bool ShaderProgram::createVBO( string attributeName, GLuint attributeindex )
 	GLuint newVBOHandle;
 	glGenBuffers( 1, &newVBOHandle );
 
-	//TODO return false on error
+	if( DEBUG  &&  GLUtil::printErrors() )
+	{
+		return false;
+	}
 
 	// Store handle for quick lookup later
 	attributeLocations[attributeName] = newVBOHandle;
@@ -210,7 +213,7 @@ bool ShaderProgram::init( bool createIndexBuffer )
 	{
 		glGenBuffers( 1, &indexBufferHandle );
 	}
-	return !GLUtil::printErrors();
+	return ! GLUtil::printErrors();
 }
 
 // Initializes index buffer

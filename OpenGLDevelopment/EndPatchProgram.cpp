@@ -6,6 +6,20 @@
 
 //--------------------------------------------------------------------------METHODS:
 
+void EndPatchProgram::draw( mat4 mvp )
+{
+	use();
+
+	enableVec3Attribute( "in_position" );
+
+	glDrawElements( GL_TRIANGLES,
+					numIndices * sizeof( GLuint ),
+					GL_UNSIGNED_INT,
+					0 );
+
+	GLUtil::printErrors();
+}
+
 bool EndPatchProgram::init()
 {
 	if( ! ShaderProgram::init( true ) ||  ! loadShaders() )
@@ -19,13 +33,20 @@ bool EndPatchProgram::init()
 	{
 		return false;
 	}
+
+	use();
+
+	// tell GL to only draw onto a pixel if the shape is closer to the viewer
+	//glEnable( GL_DEPTH_TEST ); // enable depth-testing
+	//glDepthFunc( GL_LESS ); // depth-testing interprets a smaller value as "closer"
+
 	return true;
 }
 
 void EndPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
 	use();
-	numVertices = newControlPoints.size();
+	numVertices = newControlPoints.size() / 3;
 	setVBO( "in_position", newControlPoints );
 }
 

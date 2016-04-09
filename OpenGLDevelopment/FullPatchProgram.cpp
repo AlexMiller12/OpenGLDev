@@ -7,7 +7,6 @@
 void FullPatchProgram::draw( mat4 modelView, mat4 projection )
 {
 	use();
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	enableVec3Attribute( "in_position" );
 
@@ -51,7 +50,7 @@ bool FullPatchProgram::init()
 void FullPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
 	use();
-	numVertices = newControlPoints.size();
+	numVertices = newControlPoints.size() / 3;
 	setVBO( "in_position", newControlPoints );
 }
 

@@ -1,9 +1,9 @@
 #version 450
 
-layout (std430, binding=2) buffer cameraData
-{ 
-  vec4 color
-};
+// layout (std430, binding=2) buffer cameraData
+// { 
+//   vec4 color
+// };
 
 //---------------------------------------------------------VARIABLES:
 

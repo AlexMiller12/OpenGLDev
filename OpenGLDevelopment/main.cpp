@@ -51,7 +51,8 @@ int main( int numArguments, char** arguments )
 {
 	//showCube();
 	//showGumbo();
-	showGumboBSpline();
+	//showGumboBSpline();
+	showEndPatch();
 	return 0;
 }
 
@@ -60,22 +61,18 @@ int main( int numArguments, char** arguments )
 
 vector<GLfloat> makeFSQ()
 {
-	GLfloat FSQVerts[][3] =
+	GLfloat FSQVerts[12] =
 	{
-		{ -1, -1, 0 },
-		{ -1, 1, 0 },
-		{ 1, 1, 0 },
-		{ 1, -1, 0 }
+		 -1, -1, 0,
+		 -1,  1, 0,
+		  1,  1, 0 ,
+		  1, -1, 0
 	};
 
 	int numVertices = 4;
 	vector<GLfloat> controlPoints;
-	for( int vert = 0; vert < numVertices; vert++ )
-	{
-		controlPoints.push_back( PatchData[vert][0] ); // x
-		controlPoints.push_back( PatchData[vert][1] ); // y
-		controlPoints.push_back( PatchData[vert][2] ); // z
-	}
+
+	controlPoints.assign( FSQVerts, FSQVerts + 12 );
 	return controlPoints;
 }
 
@@ -219,19 +216,24 @@ void showEndPatch()
 	{
 		exit( 1 );
 	}
+	endPatchProgram.use();
+	endPatchProgram.updateControlPoints( vertices );
+	endPatchProgram.setIndices( indices );
 
 	while( ! renderer.shouldClose() )
 	{
-		GLuint ssbo = 0;
-		glGenBuffers( 1, &ssbo );
-		glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssbo );
-		glBufferData( GL_SHADER_STORAGE_BUFFER, sizeof( cameraData ), &cameraData, GL_DYNAMIC_COPY );
-		glBindBuffer( GL_SHADER_STORAGE_BUFFER, 0 );
-		glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssbo );
-		GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
-		memcpy( p, &cameraData, sizeof( cameraData ) );
-		glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		//GLuint ssbo = 0;
+		//glGenBuffers( 1, &ssbo );
+		//glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssbo );
+		//glBufferData( GL_SHADER_STORAGE_BUFFER, sizeof( cameraData ), &cameraData, GL_DYNAMIC_COPY );
+		//GLUtil::printErrors();
+		//GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
+		//memcpy( p, &cameraData, sizeof( cameraData ) );
+		//glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
+		//GLUtil::printErrors();
 
+		endPatchProgram.draw( camera.viewProjectionMatrix() );
 		// Display the framebuffer to which we just wrote
 		renderer.swapBuffers();
 	}
@@ -308,6 +310,7 @@ void showGumboBSpline()
 
 	while( ! renderer.shouldClose() )
 	{
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		// Pretend that these are changing each frame
 		patchProgram.updateControlPoints( gumboControlPoints );
 		patchProgram.setIndices( gumboIndices );
