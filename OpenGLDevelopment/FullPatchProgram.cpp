@@ -52,14 +52,13 @@ void FullPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
 {
 	use();
 	numVertices = newControlPoints.size();
-	setVec3VBO( "in_position", newControlPoints );
+	setVBO( "in_position", newControlPoints );
 }
 
 //--------------------------------------------------------------------------HELPERS:
 
 bool FullPatchProgram::loadShaders()
 {
-
 	string vertSource, contSource, evalSource, geomSource, fragSource;
 	string directory = IOUtil::executionPath() + "\\Shaders\\";
 

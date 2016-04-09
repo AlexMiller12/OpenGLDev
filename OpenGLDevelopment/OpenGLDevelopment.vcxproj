@@ -123,6 +123,7 @@
   <ItemGroup>
     <ClCompile Include="BasicShaders.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="EndPatchProgram.cpp" />
     <ClCompile Include="FullPatchProgram.cpp" />
     <ClCompile Include="GLUtil.cpp" />
     <ClCompile Include="IOUtil.cpp" />
@@ -136,13 +137,16 @@
   <ItemGroup>
     <ClInclude Include="BasicShaders.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="EndPatchProgram.h" />
     <ClInclude Include="FullPatchProgram.h" />
+    <ClInclude Include="FullScreenQuad.h" />
     <ClInclude Include="GLUtil.h" />
     <ClInclude Include="gumbo.h" />
     <ClInclude Include="IOUtil.h" />
     <ClInclude Include="QuadTessellatorProgram.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SingleBSplinePatch.h" />
     <ClInclude Include="TessRenderer.h" />
     <ClInclude Include="WireFrameProgram.h" />
   </ItemGroup>

@@ -10,7 +10,7 @@
 #include "GLUtil.h"
 
 using namespace std;
-using namespace glm;
+using glm::vec3; using glm::vec4; using glm::mat3; using glm::mat4;
 
 class ShaderProgram
 {
@@ -51,9 +51,9 @@ protected:
 	int numIndices;
 
 private:
-	unordered_map<string, GLint> uniformLocations;
-	unordered_map<string, GLint> attributeLocations;
 	unordered_map<string, GLint> attributeIndices;
+	unordered_map<string, GLint> attributeLocations;
+	unordered_map<string, GLint> uniformLocations;
 	vector<GLuint> shaders;
 
 
@@ -73,7 +73,9 @@ public:
 	
 	bool bindToVAO(); // TODO private? 
 	bool createVBO( string attributeName, GLuint attributeindex );
-	bool enableVec3Attribute( string attributeName);
+	bool enableVec3Attribute( string attributeName );
+	bool enableVec4Attribute( string attributeName );
+	bool enableAttribute( string attributeName, int floatsPerVertex );
 
 	bool finalizeProgram();
 	GLuint getAttributeLocation( string name ); //TODO protected?
@@ -81,6 +83,7 @@ public:
 	GLuint getUniformLocation( string name );  //TODO protected?
 
 	bool init( bool createIndexBuffer );
+	bool init( GLuint vaoHandle, bool createIndexBuffer );
 
 	bool printProgramErrors();
 	bool printShaderErrors();
@@ -91,17 +94,28 @@ public:
 	bool setUniform( string uniformName, vec4 value );
 	bool setUniform( string uniformName, float value );
 
-	bool setIndices( GLushort indices[], int numFaces, GLenum usage = GL_STATIC_DRAW );
+	bool setIndices( GLuint indices[], 
+					 int numFaces, 
+					 GLenum usage = GL_STATIC_DRAW );
+	bool setIndices( GLushort indices[],
+					 int numFaces, 
+					 GLenum usage = GL_STATIC_DRAW );
+	bool setIndices( vector<GLuint> indices, GLenum usage = GL_STATIC_DRAW ); 
 	bool setIndices( vector<GLushort> indices, GLenum usage = GL_STATIC_DRAW );
 
-	bool setVec3VBO( string attributeName,  
-					 vector<GLfloat> data, 
-					 GLenum usage = GL_STATIC_DRAW );
+	bool setVBO( string attributeName,  
+				 vector<GLfloat> data, 
+				 GLenum usage = GL_STATIC_DRAW );
 
-	bool setVec3VBO( string attributeName,  
-					 GLfloat data[], 
-					 int dataLength, 
-					 GLenum usage = GL_STATIC_DRAW );
+	bool setVBO( string attributeName,  
+				 GLfloat data[], 
+				 int dataLength, 
+				 GLenum usage = GL_STATIC_DRAW );
+
+	bool shareExistingVBO( string attributeName, 
+						   GLuint attributeindex,
+						   GLuint vboHandle );
+
 	void use();
 
 private:

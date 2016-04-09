@@ -17,7 +17,9 @@
 #include "QuadTessellatorProgram.h"
 #include "FullPatchProgram.h"
 #include "Camera.h"
-#include "gumbo.h"
+//#include "gumbo.h"
+#include "SingleBSplinePatch.h"
+#include "EndPatchProgram.h"
 #include "IOUtil.h"
 
 using namespace std;
@@ -30,6 +32,7 @@ Camera camera;
 WireFrameProgram wireFramProgram;
 QuadTessellatorProgram quadProgram;
 FullPatchProgram patchProgram;
+EndPatchProgram endPatchProgram;
 std::vector<GLfloat> vertices, colors;
 std::vector<GLushort> indices;
 
@@ -40,6 +43,7 @@ void setupCamera();
 void showCube();
 void showGumbo();
 void showGumboBSpline();
+void showEndPatch();
 
 //-----------------------------------------------------------------------------MAIN:
 
@@ -53,9 +57,32 @@ int main( int numArguments, char** arguments )
 
 //------------------------------------------------------------------------FUNCTIONS:
 
+
+vector<GLfloat> makeFSQ()
+{
+	GLfloat FSQVerts[][3] =
+	{
+		{ -1, -1, 0 },
+		{ -1, 1, 0 },
+		{ 1, 1, 0 },
+		{ 1, -1, 0 }
+	};
+
+	int numVertices = 4;
+	vector<GLfloat> controlPoints;
+	for( int vert = 0; vert < numVertices; vert++ )
+	{
+		controlPoints.push_back( PatchData[vert][0] ); // x
+		controlPoints.push_back( PatchData[vert][1] ); // y
+		controlPoints.push_back( PatchData[vert][2] ); // z
+	}
+	return controlPoints;
+}
+
 vector<GLushort> makeGumboIndices()
 {
 	int numVertices = sizeof( PatchData ) / ( sizeof( float ) * 3 );
+	//int numIndices = numVertices * 3;
 	vector<GLushort> indices;
 	for( int i = 0; i < numVertices; i++ )
 	{
@@ -94,46 +121,46 @@ void showCube()
 		10.0, 10.0, -10.0,
 		-10.0, 10.0, -10.0,
 	};
-	// 8 points, 24 elements
-	GLfloat cube_colors[] = 
-	{
-		// front colors
-		1.0, 0.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 0.0, 1.0,
-		1.0, 1.0, 1.0,
-		// back colors
-		1.0, 0.0, 0.0,
-		0.0, 1.0, 0.0,
-		0.0, 0.0, 1.0,
-		1.0, 1.0, 1.0,
-	};
-	// 12 faces, 36 elements
-	GLushort cube_elements[] = 
-	{
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		// top
-		1, 5, 6,
-		6, 2, 1,
-		// back
-		7, 6, 5,
-		5, 4, 7,
-		// bottom
-		4, 0, 3,
-		3, 7, 4,
-		// left
-		4, 5, 1,
-		1, 0, 4,
-		// right
-		3, 2, 6,
-		6, 7, 3,
-	};
-	// We will get our data in vectors probably
-	vertices.assign( cube_vertices, cube_vertices + 24 );
-	colors.assign( cube_colors, cube_colors + 24 );
-	indices.assign( cube_elements, cube_elements + 36 );
+	//// 8 points, 24 elements
+	//GLfloat cube_colors[] = 
+	//{
+	//	// front colors
+	//	1.0, 0.0, 0.0,
+	//	0.0, 1.0, 0.0,
+	//	0.0, 0.0, 1.0,
+	//	1.0, 1.0, 1.0,
+	//	// back colors
+	//	1.0, 0.0, 0.0,
+	//	0.0, 1.0, 0.0,
+	//	0.0, 0.0, 1.0,
+	//	1.0, 1.0, 1.0,
+	//};
+	//// 12 faces, 36 elements
+	//GLushort cube_elements[] = 
+	//{
+	//	// front
+	//	0, 1, 2,
+	//	2, 3, 0,
+	//	// top
+	//	1, 5, 6,
+	//	6, 2, 1,
+	//	// back
+	//	7, 6, 5,
+	//	5, 4, 7,
+	//	// bottom
+	//	4, 0, 3,
+	//	3, 7, 4,
+	//	// left
+	//	4, 5, 1,
+	//	1, 0, 4,
+	//	// right
+	//	3, 2, 6,
+	//	6, 7, 3,
+	//};
+	//// We will get our data in vectors probably
+	//vertices.assign( cube_vertices, cube_vertices + 24 );
+	//colors.assign( cube_colors, cube_colors + 24 );
+	//indices.assign( cube_elements, cube_elements + 36 );
 
 	// Init GL
 	renderer.createWindow();
@@ -142,7 +169,7 @@ void showCube()
 	// Set up camera so we can get our projection matrix
 	setupCamera();
 
-	if( ! wireFramProgram.init() )
+	if( !wireFramProgram.init() )
 	{
 		exit( 1 );
 	}
@@ -156,6 +183,55 @@ void showCube()
 		wireFramProgram.setIndices( indices );
 		// Run program
 		wireFramProgram.draw( camera.viewProjectionMatrix() );
+		// Display the framebuffer to which we just wrote
+		renderer.swapBuffers();
+	}
+	renderer.unbind();
+	renderer.closeWindow();
+}
+
+struct camera_data_t
+{
+	float color[4];
+} cameraData;
+
+void showEndPatch()
+{
+
+	GLuint FSQIndices[6] =
+	{
+		0, 1, 2,	// triangle 1
+		2, 3, 0		// triangle 2
+	};
+	vector<GLfloat> vertices = makeFSQ();
+	vector<GLuint> indices;
+	indices.assign( FSQIndices, FSQIndices + 6 );
+
+
+	// Init GL
+	renderer.createWindow();
+	renderer.bind();
+
+	// Set up camera so we can get our projection matrix
+	setupCamera();
+
+	if( ! endPatchProgram.init() )
+	{
+		exit( 1 );
+	}
+
+	while( ! renderer.shouldClose() )
+	{
+		GLuint ssbo = 0;
+		glGenBuffers( 1, &ssbo );
+		glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssbo );
+		glBufferData( GL_SHADER_STORAGE_BUFFER, sizeof( cameraData ), &cameraData, GL_DYNAMIC_COPY );
+		glBindBuffer( GL_SHADER_STORAGE_BUFFER, 0 );
+		glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssbo );
+		GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
+		memcpy( p, &cameraData, sizeof( cameraData ) );
+		glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
+
 		// Display the framebuffer to which we just wrote
 		renderer.swapBuffers();
 	}
@@ -248,8 +324,12 @@ void setupCamera()
 {
 	int screen_width = 640, screen_height = 480;
 	camera = Camera( 45.0f, screen_width, screen_height, 1.0f, 200.0f );
-	vec3 camPos = vec3( -30, -10, 20 );
-	vec3 lookAt = vec3( 15, 19, 0 );
-	vec3 up = vec3( 0.2, 0.2, 2 );
+	//vec3 camPos = vec3( -30, -10, 20 );
+	//vec3 lookAt = vec3( 15, 19, 0 );
+
+	vec3 camPos = vec3( 2, 2, 5 );
+	vec3 lookAt = vec3( 0, 0, 0 );
+
+	vec3 up = vec3( 0, 1, 0 );
 	camera.lookAt( camPos, lookAt, up );
 }

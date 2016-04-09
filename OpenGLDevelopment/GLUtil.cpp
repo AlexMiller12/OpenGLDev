@@ -23,6 +23,7 @@ int GLUtil::maxNumPatches()
 	glGetIntegerv( GL_MAX_PATCH_VERTICES, &MaxPatchVertices );
 	return MaxPatchVertices;
 }
+
 // Returns true if error existed and was printed, false if no error.
 bool GLUtil::printErrors()
 {
