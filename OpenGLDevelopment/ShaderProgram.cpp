@@ -1,5 +1,9 @@
 #include "ShaderProgram.h"
 
+//---------------------------------------------------------------------------FIELDS:
+
+unordered_map<string, GLint> ShaderProgram::sboHandles;
+
 //---------------------------------------------------------CONSTRUCTORS/DESTRUCTORS:
 
 ShaderProgram::ShaderProgram()
@@ -60,6 +64,27 @@ bool ShaderProgram::bindToVAO()
 
 	if( DEBUG )  return ! GLUtil::printErrors();
 
+	return true;
+}
+
+bool ShaderProgram::createSBO( string name,
+							   GLsizei size,
+							   const void* data,
+							   GLenum usage )
+{
+	GLuint ssboHandle = 0;
+	glGenBuffers( 1, &ssboHandle );
+	sboHandles[name] = ssboHandle;
+	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
+
+	//TODO probably can't just call with a void pointer, e
+	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY );
+
+	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
+	memcpy( p, data, size );
+	glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
+
+	if( DEBUG )   return GLUtil::printErrors();
 	return true;
 }
 
@@ -154,7 +179,7 @@ GLuint ShaderProgram::getAttributeLocation( string name )
 	// If it has not yet been stored, we must query GL for location.  We don't 
 	// simply query every time because it is much more expensive than a simple 
 	// hash map lookup
-	if( !attributeLocation )
+	if( ! attributeLocation )
 	{
 		// Query location
 		attributeLocation = glGetAttribLocation( handle, name.c_str() );
@@ -165,6 +190,30 @@ GLuint ShaderProgram::getAttributeLocation( string name )
 		attributeLocations[name] = attributeLocation;
 	}
 	return attributeLocation;
+}
+
+GLuint ShaderProgram::getBlockIndex( string name )
+{
+	// Look up the stored SSBO block index 
+	GLint blockIndex = sboBlockIndices[name];
+
+	// If it has not yet been stored, we must query GL for location.  We don't 
+	// simply query every time because it is much more expensive than a simple 
+	// hash map lookup
+	if( ! blockIndex )
+	{
+		blockIndex = glGetProgramResourceIndex( handle,
+												GL_SHADER_STORAGE_BLOCK,
+												name.c_str() );
+		sboBlockIndices[name] = blockIndex;
+	}
+	return blockIndex;
+}
+
+GLuint ShaderProgram::getSBOHandle( string name )
+{
+	// Look up the stored uniform location
+	return sboHandles[name];
 }
 
 // Returns the handle of this program
@@ -304,6 +353,16 @@ bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage
 
 	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
+}
+
+void ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
+{
+	GLuint sboHandle = getSBOHandle( sboName );
+	glBindBuffer( GL_SHADER_STORAGE_BUFFER, sboHandle );
+
+	GLuint blockIndex = getBlockIndex( sboName );
+	glShaderStorageBlockBinding( handle, blockIndex, bindingPointIndex );
+	glBindBufferBase( GL_SHADER_STORAGE_BUFFER, bindingPointIndex, sboHandle );
 }
 
 bool ShaderProgram::setUniform( string uniformName, float value )

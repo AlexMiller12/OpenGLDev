@@ -222,27 +222,11 @@ void showEndPatch()
 
 	cameraData.color[0] = 1;
 	cameraData.color[3] = 1;
-	GLuint ssbo = 0;
-	glGenBuffers( 1, &ssbo );
-	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssbo );
-	glBufferData( GL_SHADER_STORAGE_BUFFER, sizeof( cameraData ), &cameraData, GL_DYNAMIC_COPY );
-	GLUtil::printErrors();
 
-	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
-	memcpy( p, &cameraData, sizeof( cameraData ) );
-	glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
-	GLUtil::printErrors();
 
-	GLuint block_index = 0;
-	GLuint program = endPatchProgram.getHandle();
-	block_index = glGetProgramResourceIndex( program,
-		GL_SHADER_STORAGE_BLOCK,
-		"cameraData" );
+	ShaderProgram::createSBO( "cameraData", sizeof( cameraData ), &cameraData );
 
-	glShaderStorageBlockBinding( program, block_index, 10 );
-
-	GLuint binding_point_index = 10;
-	glBindBufferBase( GL_SHADER_STORAGE_BUFFER, binding_point_index, ssbo );
+	endPatchProgram.setSBOBindingPoint( 0, "cameraData" );
 
 	while( ! renderer.shouldClose() )
 	{
