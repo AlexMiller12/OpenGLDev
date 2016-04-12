@@ -222,10 +222,8 @@ void showEndPatch()
 
 	cameraData.color[0] = 1;
 	cameraData.color[3] = 1;
-
-
+	
 	ShaderProgram::createSBO( "cameraData", sizeof( cameraData ), &cameraData );
-
 	endPatchProgram.setSBOBindingPoint( 0, "cameraData" );
 
 	while( ! renderer.shouldClose() )

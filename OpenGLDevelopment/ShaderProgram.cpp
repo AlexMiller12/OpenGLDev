@@ -116,7 +116,7 @@ bool ShaderProgram::createVBO( string attributeName, GLuint attributeindex )
 }
 
 // Enables an attribute pointer to buffer with given name
-bool ShaderProgram::enableAttribute( string attributeName, int floatsPerVertex )
+bool ShaderProgram::enableFloatAttribute( string attributeName, int floatsPerVertex )
 {
 	//TODO create enableVec3Attribute( int attribute index, string attributeName )
 
@@ -143,17 +143,51 @@ bool ShaderProgram::enableAttribute( string attributeName, int floatsPerVertex )
 }
 
 // Enables an attribute pointer to buffer with given name
+bool ShaderProgram::enableIntAttribute( string attributeName, int intsPerVertex )
+{
+	GLuint bufferHandle = getAttributeLocation( attributeName );
+
+	GLuint attributeIndex = attributeIndices[attributeName];
+
+	if( ! attributeIndex )   return false;
+
+	// Enable attribute
+	glEnableVertexAttribArray( attributeIndex );
+
+	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
+
+	GLsizei stride = intsPerVertex * sizeof( int );
+
+	// Tell GL how to handle data in buffer
+	glVertexAttribPointer( attributeIndex,
+						   intsPerVertex,
+						   GL_INT,
+						   GL_FALSE, // normalized?
+						   stride,		 // stride 
+						   (void*)0 );      // array buffer offset
+
+	if( DEBUG )  return ! GLUtil::printErrors();
+	return true;
+}
+
+bool ShaderProgram::enableInt1Attribute( string attributeName )
+{
+	// enable Attribute with 3 floats per vertex
+	return enableIntAttribute( attributeName, 1 );
+}
+
+// Enables an attribute pointer to buffer with given name
 bool ShaderProgram::enableVec3Attribute( string attributeName )
 {
 	// enable Attribute with 3 floats per vertex
-	return enableAttribute( attributeName, 3 );
+	return enableFloatAttribute( attributeName, 3 );
 }
 
 // Enables an attribute pointer to buffer with given name
 bool ShaderProgram::enableVec4Attribute( string attributeName )
 {
 	// enable Attribute with 4 floats per vertex
-	return enableAttribute( attributeName, 4 );
+	return enableFloatAttribute( attributeName, 4 );
 }
 
 // Prepares shader for use (links program and deletes shaders)
@@ -427,29 +461,10 @@ bool ShaderProgram::setVBO( string attributeName,
 							int dataLength,
 							GLenum usage )
 {
-	// If the VBO has not been created, return false
-	if( ! attributeLocations[attributeName] )   return false;
-
-	// Bind to VAO so we assign new VBO to it
-	bindToVAO();
-
-	// Find handle to data buffer
-	GLuint bufferHandle = getAttributeLocation( attributeName );
-
-	// Bind to the VBO
-	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
-
-	// Set the data of the buffer
-	glBufferData( GL_ARRAY_BUFFER,
-				  dataLength * sizeof( GLfloat ),
-				  data,
-				  usage );
-
-	if( DEBUG )
-	{
-		return ! GLUtil::printErrors();
-	}
-	return true;
+	return setVBO( attributeName, 
+				   (GLvoid*)data, 
+				   dataLength * sizeof( GLfloat ),
+				   usage );
 }
 
 bool ShaderProgram::shareExistingVBO( string attributeName, 
@@ -473,6 +488,36 @@ void ShaderProgram::use()
 }
 
 //--------------------------------------------------------------------------HELPERS:
+
+bool ShaderProgram::setVBO( string attributeName,
+							GLvoid* data,
+							int sizeOfData,
+							GLenum usage )
+{
+	// If the VBO has not been created, return false
+	if( ! attributeLocations[attributeName] )   return false;
+
+	// Bind to VAO so we assign new VBO to it
+	bindToVAO();
+
+	// Find handle to data buffer
+	GLuint bufferHandle = getAttributeLocation( attributeName );
+
+	// Bind to the VBO
+	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
+
+	// Set the data of the buffer
+	glBufferData( GL_ARRAY_BUFFER,
+				  sizeOfData,
+				  data,
+				  usage );
+
+	if( DEBUG )
+	{
+		return ! GLUtil::printErrors();
+	}
+	return true;
+}
 
 
 

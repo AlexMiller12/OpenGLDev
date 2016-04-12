@@ -77,9 +77,11 @@ public:
 						   const void* data, 
 						   GLenum usage = GL_DYNAMIC_COPY );
 	bool createVBO( string attributeName, GLuint attributeindex );
+	bool enableInt1Attribute( string attributeName );
 	bool enableVec3Attribute( string attributeName );
 	bool enableVec4Attribute( string attributeName );
-	bool enableAttribute( string attributeName, int floatsPerVertex );
+	bool enableFloatAttribute( string attributeName, int floatsPerVertex );
+	bool enableIntAttribute( string attributeName, int intsPerVertex );
 
 	bool finalizeProgram();
 	GLuint getAttributeLocation( string name ); //TODO protected? 
@@ -116,19 +118,33 @@ public:
 	bool setVBO( string attributeName,  
 				 vector<GLfloat> data, 
 				 GLenum usage = GL_STATIC_DRAW );
+	
+	bool setVBO( string attributeName,  
+				 vector<GLint> data, 
+				 GLenum usage = GL_STATIC_DRAW );
 
 	bool setVBO( string attributeName,  
 				 GLfloat data[], 
 				 int dataLength, 
 				 GLenum usage = GL_STATIC_DRAW );
 
+	bool setVBO( string attributeName,
+				 GLint data[],
+				 int dataLength,
+				 GLenum usage = GL_STATIC_DRAW );
+	
 	bool shareExistingVBO( string attributeName, 
 						   GLuint attributeindex,
 						   GLuint vboHandle );
 
 	void use();
 
-private:
+private:	
+	bool setVBO( string attributeName,  
+				 GLvoid* data, 
+				 int sizeOfData,
+				 GLenum usage );
+
 };
 
 #endif
