@@ -122,20 +122,23 @@ bool ShaderProgram::enableFloatAttribute( string attributeName, int floatsPerVer
 
 	GLuint bufferHandle = getAttributeLocation( attributeName );
 
-	GLuint attributeIndex = attributeIndices[attributeName]; //TODO check if there
+	GLuint attributeIndex = attributeIndices[attributeName]; 
+
+	if( ! attributeIndex )   return false;
+
 	// Enable attribute
 	glEnableVertexAttribArray( attributeIndex );
 
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
 
-	GLsizei stride = floatsPerVertex * sizeof( float );
+	//GLsizei stride = floatsPerVertex * sizeof( float );
 
 	// Tell GL how to handle data in buffer
 	glVertexAttribPointer( attributeIndex,
 							floatsPerVertex,
 							GL_FLOAT,
 							GL_FALSE, // normalized?
-							stride,		 // stride 
+							0,		 // stride 
 							(void*)0 );      // array buffer offset
 
 	if( DEBUG )  return ! GLUtil::printErrors();
@@ -156,14 +159,14 @@ bool ShaderProgram::enableIntAttribute( string attributeName, int intsPerVertex 
 
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
 
-	GLsizei stride = intsPerVertex * sizeof( int );
+	//GLsizei stride = intsPerVertex * sizeof( int );
 
 	// Tell GL how to handle data in buffer
 	glVertexAttribPointer( attributeIndex,
 						   intsPerVertex,
 						   GL_INT,
 						   GL_FALSE, // normalized?
-						   stride,		 // stride 
+						   0,		 // stride 
 						   (void*)0 );      // array buffer offset
 
 	if( DEBUG )  return ! GLUtil::printErrors();
@@ -174,6 +177,13 @@ bool ShaderProgram::enableInt1Attribute( string attributeName )
 {
 	// enable Attribute with 3 floats per vertex
 	return enableIntAttribute( attributeName, 1 );
+}
+
+// Enables an attribute pointer to buffer with given name
+bool ShaderProgram::enableVec1Attribute( string attributeName )
+{
+	// enable Attribute with 3 floats per vertex
+	return enableFloatAttribute( attributeName, 1 );
 }
 
 // Enables an attribute pointer to buffer with given name
@@ -457,6 +467,13 @@ bool ShaderProgram::setVBO( string attributeName,
 }
 
 bool ShaderProgram::setVBO( string attributeName,
+							vector<GLint> data,
+							GLenum usage )
+{
+	return setVBO( attributeName, &data[0], data.size(), usage );
+}
+
+bool ShaderProgram::setVBO( string attributeName,
 							GLfloat data[],
 							int dataLength,
 							GLenum usage )
@@ -467,6 +484,16 @@ bool ShaderProgram::setVBO( string attributeName,
 				   usage );
 }
 
+bool ShaderProgram::setVBO( string attributeName,
+							GLint data[],
+							int dataLength,
+							GLenum usage )
+{
+	return setVBO( attributeName, 
+				   (GLvoid*)data, 
+				   dataLength * sizeof( GLint ),
+				   usage );
+}
 bool ShaderProgram::shareExistingVBO( string attributeName, 
 									  GLuint attributeIndex,
 									  GLuint vboHandle )

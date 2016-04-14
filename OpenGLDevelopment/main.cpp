@@ -63,7 +63,7 @@ int main( int numArguments, char** arguments )
 
 vector<GLfloat> makeEnd()
 {
-	GLfloat endVerts[18] =
+	GLfloat endVerts[33] =
 	{
 		  0,  0,  0,	// 0
 		  0,  2,  0,
@@ -71,13 +71,13 @@ vector<GLfloat> makeEnd()
 		  2, -2,  0,
 		 -2, -2,  0,
 		 -2,  0,  0,
-		 // 0,  2,  0,	// 6
-		 // 4,  2,  0,
-		 // 4, -4,  0,
-		 //-4, -4,  0,
-		 //-4,  2,  0
+		  0,  2,  0,	// 6
+		  4,  2,  0,
+		  4, -4,  0,
+		 -4, -4,  0,
+		 -4,  2,  0
 	};
-	for( int i = 0; i < 18; i++ )
+	for( int i = 0; i < 33; i++ )
 	{
 		endVerts[i] *= 0.25f;
 	}
@@ -99,6 +99,16 @@ vector<GLuint> makeEndIndices()
 	vector<GLuint> indices;
 	indices.assign( endIndices, endIndices + 15 );
 	return indices;
+}
+
+vector<GLfloat> makeVertexIDs() {
+
+	vector<GLfloat> ids;
+	for( int i = 0; i < 6; i++ )
+	{
+		ids.push_back( 1.1 );
+	}
+	return ids;
 }
 
 vector<GLfloat> makeFSQ()
@@ -238,7 +248,7 @@ void showEndPatch()
 {
 	vector<GLfloat> vertices = makeEnd();
 	vector<GLuint> indices = makeEndIndices();
-	
+	vector<GLfloat> ids = makeVertexIDs();
 	// Init GL
 	renderer.createWindow();
 	renderer.bind();
@@ -251,10 +261,11 @@ void showEndPatch()
 		exit( 1 );
 	}
 	endPatchProgram.use();
-	endPatchProgram.updateControlPoints( vertices );
+	endPatchProgram.setVBO( "in_position", vertices ); 
+	endPatchProgram.setVBO( "in_vertexID", ids );
 	endPatchProgram.setIndices( indices );
 
-	cameraData.color[0] = 1;
+	cameraData.color[1] = 1;
 	cameraData.color[3] = 1;
 	
 	ShaderProgram::createSBO( "cameraData", sizeof( cameraData ), &cameraData );

@@ -11,6 +11,8 @@ void EndPatchProgram::draw( mat4 mvp )
 	use();
 
 	enableVec3Attribute( "in_position" );
+	enableVec1Attribute( "in_vertexID" );
+	//enableInt1Attribute( "in_vertexID" );
 
 	glDrawElements( GL_TRIANGLES,
 					numIndices * sizeof( GLuint ),
@@ -28,6 +30,7 @@ bool EndPatchProgram::init()
 	}
 
 	createVBO( "in_position", ShaderProgram::gl_Vertex );
+	createVBO( "in_vertexID", ShaderProgram::gl_MultiTexCoord7 );
 
 	if( ! finalizeProgram() )
 	{
@@ -41,13 +44,6 @@ bool EndPatchProgram::init()
 	glDepthFunc( GL_LESS ); // depth-testing interprets a smaller value as "closer"
 
 	return true;
-}
-
-void EndPatchProgram::updateControlPoints( vector<GLfloat> newControlPoints )
-{
-	use();
-	numVertices = newControlPoints.size() / 3;
-	setVBO( "in_position", newControlPoints );
 }
 
 //--------------------------------------------------------------------------HELPERS:

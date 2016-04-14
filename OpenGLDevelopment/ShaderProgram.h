@@ -78,6 +78,7 @@ public:
 						   GLenum usage = GL_DYNAMIC_COPY );
 	bool createVBO( string attributeName, GLuint attributeindex );
 	bool enableInt1Attribute( string attributeName );
+	bool enableVec1Attribute( string attributeName );
 	bool enableVec3Attribute( string attributeName );
 	bool enableVec4Attribute( string attributeName );
 	bool enableFloatAttribute( string attributeName, int floatsPerVertex );
