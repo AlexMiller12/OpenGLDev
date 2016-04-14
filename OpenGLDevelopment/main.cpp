@@ -17,8 +17,8 @@
 #include "QuadTessellatorProgram.h"
 #include "FullPatchProgram.h"
 #include "Camera.h"
-//#include "gumbo.h"
-#include "SingleBSplinePatch.h"
+//#include "Mesh_Gumbo.h"
+#include "Mesh_SingleBSplinePatch.h"
 #include "EndPatchProgram.h"
 #include "IOUtil.h"
 
@@ -38,6 +38,8 @@ std::vector<GLushort> indices;
 
 //-----------------------------------------------------------------------PROTOTYPES:
 
+vector<GLfloat> makeEnd();
+vector<GLfloat> makeFSQ();
 vector<GLfloat> makeGumbo();
 void setupCamera();
 void showCube();
@@ -58,6 +60,46 @@ int main( int numArguments, char** arguments )
 
 //------------------------------------------------------------------------FUNCTIONS:
 
+
+vector<GLfloat> makeEnd()
+{
+	GLfloat endVerts[18] =
+	{
+		  0,  0,  0,	// 0
+		  0,  2,  0,
+		  2,  0,  0,
+		  2, -2,  0,
+		 -2, -2,  0,
+		 -2,  0,  0,
+		 // 0,  2,  0,	// 6
+		 // 4,  2,  0,
+		 // 4, -4,  0,
+		 //-4, -4,  0,
+		 //-4,  2,  0
+	};
+	for( int i = 0; i < 18; i++ )
+	{
+		endVerts[i] *= 0.25f;
+	}
+	vector<GLfloat> vertices;
+	vertices.assign( endVerts, endVerts + 18 );
+	return vertices;
+}
+
+vector<GLuint> makeEndIndices()
+{
+	GLuint endIndices[15] =
+	{
+		0, 1, 2,	// triangle 1
+		0, 2, 3,	// triangle 2
+		0, 3, 4,
+		0, 4, 5,
+		0, 5, 1
+	};
+	vector<GLuint> indices;
+	indices.assign( endIndices, endIndices + 15 );
+	return indices;
+}
 
 vector<GLfloat> makeFSQ()
 {
@@ -194,17 +236,9 @@ struct camera_data_t
 
 void showEndPatch()
 {
-
-	GLuint FSQIndices[6] =
-	{
-		0, 1, 2,	// triangle 1
-		2, 3, 0		// triangle 2
-	};
-	vector<GLfloat> vertices = makeFSQ();
-	vector<GLuint> indices;
-	indices.assign( FSQIndices, FSQIndices + 6 );
-
-
+	vector<GLfloat> vertices = makeEnd();
+	vector<GLuint> indices = makeEndIndices();
+	
 	// Init GL
 	renderer.createWindow();
 	renderer.bind();

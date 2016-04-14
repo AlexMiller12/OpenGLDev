@@ -68,9 +68,6 @@
     <ClInclude Include="BasicShaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gumbo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="QuadTessellatorProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,13 +83,16 @@
     <ClInclude Include="FullPatchProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SingleBSplinePatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="EndPatchProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FullScreenQuad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Gumbo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_SingleBSplinePatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
