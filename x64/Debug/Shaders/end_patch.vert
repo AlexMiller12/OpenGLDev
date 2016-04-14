@@ -14,7 +14,8 @@ out float v_vertexID;
 void main()
 {
 	v_position = in_position;	
-	if( in_vertexID > 1 )
+	int vertexID = int( in_vertexID );
+	if( vertexID > 3 )
 	{
 		v_vertexID = 1;
 	}

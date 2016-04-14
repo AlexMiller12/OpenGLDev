@@ -123,9 +123,7 @@ bool ShaderProgram::enableFloatAttribute( string attributeName, int floatsPerVer
 	GLuint bufferHandle = getAttributeLocation( attributeName );
 
 	GLuint attributeIndex = attributeIndices[attributeName]; 
-
-	if( ! attributeIndex )   return false;
-
+	
 	// Enable attribute
 	glEnableVertexAttribArray( attributeIndex );
 
@@ -151,8 +149,6 @@ bool ShaderProgram::enableIntAttribute( string attributeName, int intsPerVertex 
 	GLuint bufferHandle = getAttributeLocation( attributeName );
 
 	GLuint attributeIndex = attributeIndices[attributeName];
-
-	if( ! attributeIndex )   return false;
 
 	// Enable attribute
 	glEnableVertexAttribArray( attributeIndex );

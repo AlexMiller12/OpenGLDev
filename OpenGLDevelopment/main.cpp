@@ -106,7 +106,7 @@ vector<GLfloat> makeVertexIDs() {
 	vector<GLfloat> ids;
 	for( int i = 0; i < 6; i++ )
 	{
-		ids.push_back( 1.1 );
+		ids.push_back( i );
 	}
 	return ids;
 }
@@ -170,46 +170,6 @@ void showCube()
 		10.0, 10.0, -10.0,
 		-10.0, 10.0, -10.0,
 	};
-	//// 8 points, 24 elements
-	//GLfloat cube_colors[] = 
-	//{
-	//	// front colors
-	//	1.0, 0.0, 0.0,
-	//	0.0, 1.0, 0.0,
-	//	0.0, 0.0, 1.0,
-	//	1.0, 1.0, 1.0,
-	//	// back colors
-	//	1.0, 0.0, 0.0,
-	//	0.0, 1.0, 0.0,
-	//	0.0, 0.0, 1.0,
-	//	1.0, 1.0, 1.0,
-	//};
-	//// 12 faces, 36 elements
-	//GLushort cube_elements[] = 
-	//{
-	//	// front
-	//	0, 1, 2,
-	//	2, 3, 0,
-	//	// top
-	//	1, 5, 6,
-	//	6, 2, 1,
-	//	// back
-	//	7, 6, 5,
-	//	5, 4, 7,
-	//	// bottom
-	//	4, 0, 3,
-	//	3, 7, 4,
-	//	// left
-	//	4, 5, 1,
-	//	1, 0, 4,
-	//	// right
-	//	3, 2, 6,
-	//	6, 7, 3,
-	//};
-	//// We will get our data in vectors probably
-	//vertices.assign( cube_vertices, cube_vertices + 24 );
-	//colors.assign( cube_colors, cube_colors + 24 );
-	//indices.assign( cube_elements, cube_elements + 36 );
 
 	// Init GL
 	renderer.createWindow();
