@@ -67,21 +67,11 @@ bool ShaderProgram::bindToVAO()
 	return true;
 }
 
-bool ShaderProgram::createSBO( string name,
-							   GLsizei size,
-							   const void* data,
-							   GLenum usage )
+bool ShaderProgram::createSBO( string name )
 {
 	GLuint ssboHandle = 0;
 	glGenBuffers( 1, &ssboHandle );
 	sboHandles[name] = ssboHandle;
-
-	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
-	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY );
-
-	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
-	memcpy( p, data, size );
-	glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
 
 	if( DEBUG )   return GLUtil::printErrors();
 	return true;
@@ -394,16 +384,23 @@ bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage
 	return true;
 }
 
-//bool ShaderProgram::setSBO( string name,
-//							GLsizei size,
-//							const void* data,
-//							GLenum usage = GL_DYNAMIC_COPY )
-//{
-//	GLuint sboHandle = getSBOHandle( name );
-//	glBindBuffer( GL_SHADER_STORAGE_BUFFER, sboHandle );
-//	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY );
-//
-//}
+bool ShaderProgram::setSBO( string name,
+							GLsizei size,
+							const void* data,
+							GLenum usage )
+{
+	GLuint ssboHandle = getSBOHandle( name );
+
+	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
+	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, usage );
+
+	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
+	memcpy( p, data, size );
+	glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
+
+	if( DEBUG )  return ! GLUtil::printErrors();
+	return true;
+}
 void ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
 {
 	GLuint sboHandle = getSBOHandle( sboName );

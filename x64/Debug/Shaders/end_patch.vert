@@ -5,15 +5,18 @@ layout (std430, binding=2) buffer valenceBuffer
   int valence[];
 };
 
+// layout (std430, binding=2) buffer neighborIndexBuffer
+// { 
+//   int valence[];
+// };
 //---------------------------------------------------------VARIABLES:
 
 in vec3 in_position;
 in float in_vertexID;
 
 out vec3 v_position;
-// out float v_vertexID;
+
 out vec4 v_color;
-// out vec3 v_color;
 
 //--------------------------------------------------------------MAIN:
 

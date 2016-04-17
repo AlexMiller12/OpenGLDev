@@ -11,13 +11,13 @@ class EndPatchProgram : public ShaderProgram
 {
 	
 //--------------------------------------------------------------------------STRUCTS:
-
-public:
-	typedef struct endVertex
-	{
-		//int* neighborIndices;
-		int* valenceBuffer;
-	} EndVertex;
+//
+//public:
+//	typedef struct endVertex
+//	{
+//		//int* neighborIndices;
+//		int* valenceBuffer;
+//	} EndVertex;
 
 //------------------------------------------------------------------------CONSTANTS:
 	
