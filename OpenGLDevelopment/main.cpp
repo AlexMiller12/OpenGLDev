@@ -201,32 +201,32 @@ void showCube()
 
 void showEndPatch()
 {
-	GLint offsetAndValenceBuffer[12] =
-	{
-		0, 3,
-		5, 4,
-		13, 3,
-		19, 4,
-		26, 4,
-		33, 3
-	};
 	//GLint offsetAndValenceBuffer[12] =
 	//{
-	//	0, 0,
-	//	3, 1,
-	//	6, 2,
-	//	9, 3,
-	//	12, 4,
-	//	15, 5
+	//	0, 3,
+	//	5, 4,
+	//	13, 3,
+	//	19, 4,
+	//	26, 4,
+	//	33, 3
 	//};
+	GLint offsetAndValenceBuffer[12] =
+	{
+		0, 0,
+		3, 1,
+		6, 2,
+		9, 3,
+		12, 4,
+		15, 5
+	};
 	GLint neighborIndexBuffer[18] =
 	{
+		0, 0, 0,
+		1, 1, 1,
+		1, 1, 1,
 		0, 1, 0,
-		1, 0, 0,
-		1, 0, 0,
-		1, 0, 0,
-		1, 0, 0,
-		1, 0, 0
+		0, 1, 0,
+		1, 1, 1
 	};
 
 	int valenceBufferSize = 12 * sizeof( GLint );
@@ -252,8 +252,11 @@ void showEndPatch()
 	endPatchProgram.setIndices( indices );
 
 	ShaderProgram::createSBO( "valenceBuffer" );
+	ShaderProgram::createSBO( "neighborIndexBuffer" );
 	ShaderProgram::setSBO( "valenceBuffer", valenceBufferSize, offsetAndValenceBuffer );
-	endPatchProgram.setSBOBindingPoint( 0, "valenceBuffer" );
+	ShaderProgram::setSBO( "neighborIndexBuffer", neighborIndexBufferSize, neighborIndexBuffer );
+	endPatchProgram.setSBOBindingPoint( 2, "valenceBuffer" );
+	endPatchProgram.setSBOBindingPoint( 1, "neighborIndexBuffer" );
 
 	while( ! renderer.shouldClose() )
 	{

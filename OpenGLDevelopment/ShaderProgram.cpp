@@ -401,7 +401,8 @@ bool ShaderProgram::setSBO( string name,
 	if( DEBUG )  return ! GLUtil::printErrors();
 	return true;
 }
-void ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
+
+bool ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
 {
 	GLuint sboHandle = getSBOHandle( sboName );
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, sboHandle );
@@ -409,6 +410,9 @@ void ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName
 	GLuint blockIndex = getBlockIndex( sboName );
 	glShaderStorageBlockBinding( handle, blockIndex, bindingPointIndex );
 	glBindBufferBase( GL_SHADER_STORAGE_BUFFER, bindingPointIndex, sboHandle );
+
+	if( DEBUG )  return !GLUtil::printErrors();
+	return true;
 }
 
 bool ShaderProgram::setUniform( string uniformName, float value )
