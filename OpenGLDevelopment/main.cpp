@@ -210,6 +210,21 @@ void showEndPatch()
 	//	26, 4,
 	//	33, 3
 	//};
+	GLfloat endVerts[33] =
+	{
+		0, 0, 0,	// 0
+		0, 2, 0,
+		2, 0, 0,
+		2, -2, 0,
+		-2, -2, 0,
+		-2, 0, 0,
+		0, 2, 0,	// 6
+		4, 2, 0,
+		4, -4, 0,
+		-4, -4, 0,
+		-4, 2, 0
+	};
+
 	GLint offsetAndValenceBuffer[12] =
 	{
 		0, 0,
@@ -231,6 +246,7 @@ void showEndPatch()
 
 	int valenceBufferSize = 12 * sizeof( GLint );
 	int neighborIndexBufferSize = 18 * sizeof( GLint );
+	int vertexDataBufferSize = 33 * sizeof( GLfloat );
 
 	vector<GLfloat> vertices = makeEnd();
 	vector<GLuint> indices = makeEndIndices();
@@ -253,10 +269,13 @@ void showEndPatch()
 
 	ShaderProgram::createSBO( "valenceBuffer" );
 	ShaderProgram::createSBO( "neighborIndexBuffer" );
+	ShaderProgram::createSBO( "vertexData" );
 	ShaderProgram::setSBO( "valenceBuffer", valenceBufferSize, offsetAndValenceBuffer );
 	ShaderProgram::setSBO( "neighborIndexBuffer", neighborIndexBufferSize, neighborIndexBuffer );
+	ShaderProgram::setSBO( "vertexData", vertexDataBufferSize, endVerts );
 	endPatchProgram.setSBOBindingPoint( 2, "valenceBuffer" );
 	endPatchProgram.setSBOBindingPoint( 1, "neighborIndexBuffer" );
+	endPatchProgram.setSBOBindingPoint( 3, "vertexData" );
 
 	while( ! renderer.shouldClose() )
 	{
