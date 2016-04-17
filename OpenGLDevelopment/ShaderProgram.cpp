@@ -75,9 +75,8 @@ bool ShaderProgram::createSBO( string name,
 	GLuint ssboHandle = 0;
 	glGenBuffers( 1, &ssboHandle );
 	sboHandles[name] = ssboHandle;
-	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
 
-	//TODO probably can't just call with a void pointer, e
+	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
 	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY );
 
 	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
@@ -395,6 +394,16 @@ bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage
 	return true;
 }
 
+//bool ShaderProgram::setSBO( string name,
+//							GLsizei size,
+//							const void* data,
+//							GLenum usage = GL_DYNAMIC_COPY )
+//{
+//	GLuint sboHandle = getSBOHandle( name );
+//	glBindBuffer( GL_SHADER_STORAGE_BUFFER, sboHandle );
+//	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY );
+//
+//}
 void ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
 {
 	GLuint sboHandle = getSBOHandle( sboName );

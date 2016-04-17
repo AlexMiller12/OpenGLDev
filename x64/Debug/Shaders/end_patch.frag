@@ -1,14 +1,15 @@
 #version 430
 
-layout (std430, binding=2) buffer cameraData
-{ 
-  vec4 color;
-};
+// layout (std430, binding=2) buffer cameraData
+// { 
+//   vec4 color;
+// };
 
 //---------------------------------------------------------VARIABLES:
 
 in vec3 v_position;
-in float v_vertexID;
+// in float v_vertexID;
+in vec4 v_color;
 
 out vec4 out_fragColor;
 
@@ -18,6 +19,6 @@ out vec4 out_fragColor;
 
 void main()
 {
-	out_fragColor = color + vec4( v_vertexID, 0, 0, 1 );
+	out_fragColor = v_color;
 	// out_fragColor = vec4(1, 0, 0, 1);
 }

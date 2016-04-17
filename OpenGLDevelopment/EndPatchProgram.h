@@ -10,8 +10,15 @@ using namespace std;
 class EndPatchProgram : public ShaderProgram
 {
 	
-//----------------------------------------------------------------------------ENUMS:
-	
+//--------------------------------------------------------------------------STRUCTS:
+
+public:
+	typedef struct endVertex
+	{
+		//int* neighborIndices;
+		int* valenceBuffer;
+	} EndVertex;
+
 //------------------------------------------------------------------------CONSTANTS:
 	
 //---------------------------------------------------------------------------FIELDS:

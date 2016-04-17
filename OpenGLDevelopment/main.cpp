@@ -204,6 +204,16 @@ struct camera_data_t
 	float color[4];
 } cameraData;
 
+GLint offsetAndValenceBuffer[12] =
+{
+	0, 3,
+	5, 4,
+	13, 3,
+	19, 4,
+	26, 4,
+	33, 3
+};
+
 void showEndPatch()
 {
 	vector<GLfloat> vertices = makeEnd();
@@ -225,11 +235,16 @@ void showEndPatch()
 	endPatchProgram.setVBO( "in_vertexID", ids );
 	endPatchProgram.setIndices( indices );
 
-	cameraData.color[1] = 1;
-	cameraData.color[3] = 1;
-	
-	ShaderProgram::createSBO( "cameraData", sizeof( cameraData ), &cameraData );
-	endPatchProgram.setSBOBindingPoint( 0, "cameraData" );
+	//cameraData.color[1] = 1;
+	//cameraData.color[3] = 1;
+	//ShaderProgram::createSBO( "cameraData", sizeof( cameraData ), &cameraData );
+	//endPatchProgram.setSBOBindingPoint( 0, "cameraData" );
+
+	EndPatchProgram::EndVertex endVertex;
+	int valenceBufferSize = 12 * sizeof( GLint );
+	endVertex.valenceBuffer = offsetAndValenceBuffer;
+	ShaderProgram::createSBO( "valenceBuffer", valenceBufferSize, endVertex.valenceBuffer );
+	endPatchProgram.setSBOBindingPoint( 0, "valenceBuffer" );
 
 	while( ! renderer.shouldClose() )
 	{
