@@ -72,12 +72,10 @@ public:
 	bool attachShader( string source, GLenum type );
 	
 	bool bindToVAO(); // TODO private? 
-	static bool createSBO( string name, 
-						   GLsizei size, 
-						   const void* data, 
-						   GLenum usage = GL_DYNAMIC_COPY );
+	static bool createSBO( string name );
 	bool createVBO( string attributeName, GLuint attributeindex );
 	bool enableInt1Attribute( string attributeName );
+	bool enableVec1Attribute( string attributeName );
 	bool enableVec3Attribute( string attributeName );
 	bool enableVec4Attribute( string attributeName );
 	bool enableFloatAttribute( string attributeName, int floatsPerVertex );
@@ -106,8 +104,14 @@ public:
 					 GLenum usage = GL_STATIC_DRAW );
 	bool setIndices( vector<GLuint> indices, GLenum usage = GL_STATIC_DRAW ); 
 	bool setIndices( vector<GLushort> indices, GLenum usage = GL_STATIC_DRAW );
+	
+	static bool setSBO( string name,
+						GLsizei size,
+						const void* data,
+						GLenum usage = GL_DYNAMIC_COPY );
 
-	void setSBOBindingPoint( GLuint bindingPointIndex, string sboName );
+	bool setSBOBindingPoint( GLuint bindingPointIndex, string sboName );
+	bool setSBOBindingPoint( GLuint bindingPointIndex, string sboName, GLuint sboHandle );
 
 	bool setUniform( string uniformName, mat3 value );
 	bool setUniform( string uniformName, mat4 value );

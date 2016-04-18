@@ -141,12 +141,12 @@
     <ClInclude Include="FullPatchProgram.h" />
     <ClInclude Include="FullScreenQuad.h" />
     <ClInclude Include="GLUtil.h" />
-    <ClInclude Include="gumbo.h" />
+    <ClInclude Include="Mesh_Gumbo.h" />
     <ClInclude Include="IOUtil.h" />
     <ClInclude Include="QuadTessellatorProgram.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="SingleBSplinePatch.h" />
+    <ClInclude Include="Mesh_SingleBSplinePatch.h" />
     <ClInclude Include="TessRenderer.h" />
     <ClInclude Include="WireFrameProgram.h" />
   </ItemGroup>

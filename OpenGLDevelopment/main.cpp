@@ -17,8 +17,8 @@
 #include "QuadTessellatorProgram.h"
 #include "FullPatchProgram.h"
 #include "Camera.h"
-//#include "gumbo.h"
-#include "SingleBSplinePatch.h"
+//#include "Mesh_Gumbo.h"
+#include "Mesh_SingleBSplinePatch.h"
 #include "EndPatchProgram.h"
 #include "IOUtil.h"
 
@@ -38,6 +38,8 @@ std::vector<GLushort> indices;
 
 //-----------------------------------------------------------------------PROTOTYPES:
 
+vector<GLfloat> makeEnd();
+vector<GLfloat> makeFSQ();
 vector<GLfloat> makeGumbo();
 void setupCamera();
 void showCube();
@@ -58,6 +60,61 @@ int main( int numArguments, char** arguments )
 
 //------------------------------------------------------------------------FUNCTIONS:
 
+
+vector<GLfloat> makeEnd()
+{
+	GLfloat endVerts[33] =
+	{
+		  0,  0,  0,	// 0
+		  0,  2,  0,
+		  2,  0,  0,
+		  2, -2,  0,
+		 -2, -2,  0,
+		 -2,  0,  0,	// 6
+		 // 0,  2,  0,	
+		 // 4,  2,  0,
+		 // 4, -4,  0,
+		 //-4, -4,  0,
+		 //-4,  2,  0
+		 1, 0, 0,
+		 1, 1, 1,
+		 1, 1, 1,
+		 1, 1, 1,
+		 1, 1, 1
+	};
+	for( int i = 0; i < 33; i++ )
+	{
+		endVerts[i] *= 0.25f;
+	}
+	vector<GLfloat> vertices;
+	vertices.assign( endVerts, endVerts + 33 );
+	return vertices;
+}
+
+vector<GLuint> makeEndIndices()
+{
+	GLuint endIndices[15] =
+	{
+		0, 1, 2,	// triangle 1
+		0, 2, 3,	// triangle 2
+		0, 3, 4,
+		0, 4, 5,
+		0, 5, 1
+	};
+	vector<GLuint> indices;
+	indices.assign( endIndices, endIndices + 15 );
+	return indices;
+}
+
+vector<GLfloat> makeVertexIDs() {
+
+	vector<GLfloat> ids;
+	for( int i = 0; i < 6; i++ )
+	{
+		ids.push_back( i );
+	}
+	return ids;
+}
 
 vector<GLfloat> makeFSQ()
 {
@@ -118,46 +175,6 @@ void showCube()
 		10.0, 10.0, -10.0,
 		-10.0, 10.0, -10.0,
 	};
-	//// 8 points, 24 elements
-	//GLfloat cube_colors[] = 
-	//{
-	//	// front colors
-	//	1.0, 0.0, 0.0,
-	//	0.0, 1.0, 0.0,
-	//	0.0, 0.0, 1.0,
-	//	1.0, 1.0, 1.0,
-	//	// back colors
-	//	1.0, 0.0, 0.0,
-	//	0.0, 1.0, 0.0,
-	//	0.0, 0.0, 1.0,
-	//	1.0, 1.0, 1.0,
-	//};
-	//// 12 faces, 36 elements
-	//GLushort cube_elements[] = 
-	//{
-	//	// front
-	//	0, 1, 2,
-	//	2, 3, 0,
-	//	// top
-	//	1, 5, 6,
-	//	6, 2, 1,
-	//	// back
-	//	7, 6, 5,
-	//	5, 4, 7,
-	//	// bottom
-	//	4, 0, 3,
-	//	3, 7, 4,
-	//	// left
-	//	4, 5, 1,
-	//	1, 0, 4,
-	//	// right
-	//	3, 2, 6,
-	//	6, 7, 3,
-	//};
-	//// We will get our data in vectors probably
-	//vertices.assign( cube_vertices, cube_vertices + 24 );
-	//colors.assign( cube_colors, cube_colors + 24 );
-	//indices.assign( cube_elements, cube_elements + 36 );
 
 	// Init GL
 	renderer.createWindow();
@@ -187,24 +204,35 @@ void showCube()
 	renderer.closeWindow();
 }
 
-struct camera_data_t
-{
-	float color[4];
-} cameraData;
-
 void showEndPatch()
 {
-
-	GLuint FSQIndices[6] =
+	GLint offsetAndValenceBuffer[12] =
 	{
-		0, 1, 2,	// triangle 1
-		2, 3, 0		// triangle 2
+		0, 3,
+		5, 4,
+		13, 3,
+		19, 4,
+		26, 4,
+		33, 3
 	};
-	vector<GLfloat> vertices = makeFSQ();
-	vector<GLuint> indices;
-	indices.assign( FSQIndices, FSQIndices + 6 );
 
+	GLint neighborIndexBuffer[39] =
+	{
+		1,2,3,4,5,
+		6,7,2,3,0,4,5,10,
+		7,8,3,0,1,6,
+		2,7,8,9,4,0,1,
+		0,3,8,9,10,5,1,
+		1,0,4,9,10,6
+	};
 
+	int valenceBufferSize = 12 * sizeof( GLint );
+	int neighborIndexBufferSize = 18 * sizeof( GLint );
+	int vertexDataBufferSize = 33 * sizeof( GLfloat );
+
+	vector<GLfloat> vertices = makeEnd();
+	vector<GLuint> indices = makeEndIndices();
+	vector<GLfloat> ids = makeVertexIDs();
 	// Init GL
 	renderer.createWindow();
 	renderer.bind();
@@ -217,16 +245,18 @@ void showEndPatch()
 		exit( 1 );
 	}
 	endPatchProgram.use();
-	endPatchProgram.updateControlPoints( vertices );
+	endPatchProgram.setVBO( "in_position", vertices ); 
+	endPatchProgram.setVBO( "in_vertexID", ids );
 	endPatchProgram.setIndices( indices );
 
-	cameraData.color[0] = 1;
-	cameraData.color[3] = 1;
+	ShaderProgram::setSBO( "valenceBuffer", valenceBufferSize, offsetAndValenceBuffer );
+	endPatchProgram.setSBOBindingPoint( 2, "valenceBuffer" );
 
+	ShaderProgram::setSBO( "neighborIndexBuffer", neighborIndexBufferSize, neighborIndexBuffer );
+	endPatchProgram.setSBOBindingPoint( 1, "neighborIndexBuffer" );
 
-	ShaderProgram::createSBO( "cameraData", sizeof( cameraData ), &cameraData );
-
-	endPatchProgram.setSBOBindingPoint( 0, "cameraData" );
+	GLuint vboHandle = endPatchProgram.getAttributeLocation( "in_position" );
+	endPatchProgram.setSBOBindingPoint( 3, "vertexData", vboHandle );
 
 	while( ! renderer.shouldClose() )
 	{

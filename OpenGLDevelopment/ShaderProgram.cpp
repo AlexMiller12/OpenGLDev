@@ -67,22 +67,11 @@ bool ShaderProgram::bindToVAO()
 	return true;
 }
 
-bool ShaderProgram::createSBO( string name,
-							   GLsizei size,
-							   const void* data,
-							   GLenum usage )
+bool ShaderProgram::createSBO( string name )
 {
 	GLuint ssboHandle = 0;
 	glGenBuffers( 1, &ssboHandle );
 	sboHandles[name] = ssboHandle;
-	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
-
-	//TODO probably can't just call with a void pointer, e
-	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY );
-
-	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
-	memcpy( p, data, size );
-	glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
 
 	if( DEBUG )   return GLUtil::printErrors();
 	return true;
@@ -121,23 +110,20 @@ bool ShaderProgram::enableFloatAttribute( string attributeName, int floatsPerVer
 	GLuint bufferHandle = getAttributeLocation( attributeName );
 
 	GLuint attributeIndex = attributeIndices[attributeName]; 
-
-	// Check that it's there
-	if( ! attributeIndex )   return false;
-
+	
 	// Enable attribute
 	glEnableVertexAttribArray( attributeIndex );
 
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
 
-	GLsizei stride = floatsPerVertex * sizeof( float );
+	//GLsizei stride = floatsPerVertex * sizeof( float );
 
 	// Tell GL how to handle data in buffer
 	glVertexAttribPointer( attributeIndex,
 							floatsPerVertex,
 							GL_FLOAT,
 							GL_FALSE, // normalized?
-							stride,		 // stride 
+							0,		 // stride 
 							(void*)0 );      // array buffer offset
 
 	if( DEBUG )  return ! GLUtil::printErrors();
@@ -151,21 +137,19 @@ bool ShaderProgram::enableIntAttribute( string attributeName, int intsPerVertex 
 
 	GLuint attributeIndex = attributeIndices[attributeName];
 
-	if( ! attributeIndex )   return false;
-
 	// Enable attribute
 	glEnableVertexAttribArray( attributeIndex );
 
 	glBindBuffer( GL_ARRAY_BUFFER, bufferHandle );
 
-	GLsizei stride = intsPerVertex * sizeof( int );
+	//GLsizei stride = intsPerVertex * sizeof( int );
 
 	// Tell GL how to handle data in buffer
 	glVertexAttribPointer( attributeIndex,
 						   intsPerVertex,
 						   GL_INT,
 						   GL_FALSE, // normalized?
-						   stride,		 // stride 
+						   0,		 // stride 
 						   (void*)0 );      // array buffer offset
 
 	if( DEBUG )  return ! GLUtil::printErrors();
@@ -176,6 +160,13 @@ bool ShaderProgram::enableInt1Attribute( string attributeName )
 {
 	// enable Attribute with 3 floats per vertex
 	return enableIntAttribute( attributeName, 1 );
+}
+
+// Enables an attribute pointer to buffer with given name
+bool ShaderProgram::enableVec1Attribute( string attributeName )
+{
+	// enable Attribute with 3 floats per vertex
+	return enableFloatAttribute( attributeName, 1 );
 }
 
 // Enables an attribute pointer to buffer with given name
@@ -391,14 +382,40 @@ bool ShaderProgram::setIndices( GLushort indices[], int indicesLen, GLenum usage
 	return true;
 }
 
-void ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
+bool ShaderProgram::setSBO( string name,
+							GLsizei size,
+							const void* data,
+							GLenum usage )
+{
+	GLuint ssboHandle = getSBOHandle( name );
+
+	glBindBuffer( GL_SHADER_STORAGE_BUFFER, ssboHandle );
+	glBufferData( GL_SHADER_STORAGE_BUFFER, size, data, usage );
+
+	GLvoid* p = glMapBuffer( GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY );
+	memcpy( p, data, size );
+	glUnmapBuffer( GL_SHADER_STORAGE_BUFFER );
+
+	if( DEBUG )  return ! GLUtil::printErrors();
+	return true;
+}
+
+bool ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
 {
 	GLuint sboHandle = getSBOHandle( sboName );
+	return setSBOBindingPoint( bindingPointIndex, sboName, sboHandle );
+}
+
+bool ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName, GLuint sboHandle )
+{
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, sboHandle );
 
 	GLuint blockIndex = getBlockIndex( sboName );
 	glShaderStorageBlockBinding( handle, blockIndex, bindingPointIndex );
 	glBindBufferBase( GL_SHADER_STORAGE_BUFFER, bindingPointIndex, sboHandle );
+
+	if( DEBUG )  return !GLUtil::printErrors();
+	return true;
 }
 
 bool ShaderProgram::setUniform( string uniformName, float value )
@@ -476,7 +493,6 @@ bool ShaderProgram::setVBO( string attributeName,
 				   usage );
 }
 
-
 bool ShaderProgram::setVBO( string attributeName,
 							GLint data[],
 							int dataLength,
@@ -510,7 +526,6 @@ void ShaderProgram::use()
 
 //--------------------------------------------------------------------------HELPERS:
 
-
 bool ShaderProgram::setVBO( string attributeName,
 							GLvoid* data,
 							int sizeOfData,
@@ -540,5 +555,8 @@ bool ShaderProgram::setVBO( string attributeName,
 	}
 	return true;
 }
+
+
+
 
 
