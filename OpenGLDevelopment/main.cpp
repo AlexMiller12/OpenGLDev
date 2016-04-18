@@ -272,15 +272,12 @@ void showEndPatch()
 	endPatchProgram.setVBO( "in_vertexID", ids );
 	endPatchProgram.setIndices( indices );
 
-	ShaderProgram::createSBO( "valenceBuffer" );
 	ShaderProgram::setSBO( "valenceBuffer", valenceBufferSize, offsetAndValenceBuffer );
 	endPatchProgram.setSBOBindingPoint( 2, "valenceBuffer" );
 
-	ShaderProgram::createSBO( "neighborIndexBuffer" );
 	ShaderProgram::setSBO( "neighborIndexBuffer", neighborIndexBufferSize, neighborIndexBuffer );
 	endPatchProgram.setSBOBindingPoint( 1, "neighborIndexBuffer" );
 
-	ShaderProgram::createSBO( "vertexData" );
 	GLuint vboHandle = endPatchProgram.getAttributeLocation( "in_position" );
 	endPatchProgram.setSBOBindingPoint( 3, "vertexData", vboHandle );
 

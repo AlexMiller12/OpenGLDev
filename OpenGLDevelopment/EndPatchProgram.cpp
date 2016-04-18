@@ -39,6 +39,10 @@ bool EndPatchProgram::init()
 
 	use();
 
+	ShaderProgram::createSBO( "valenceBuffer" );
+	ShaderProgram::createSBO( "neighborIndexBuffer" );
+	ShaderProgram::createSBO( "vertexData" );
+
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable( GL_DEPTH_TEST ); // enable depth-testing
 	glDepthFunc( GL_LESS ); // depth-testing interprets a smaller value as "closer"
