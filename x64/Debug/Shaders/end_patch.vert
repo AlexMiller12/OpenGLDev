@@ -71,22 +71,8 @@ void main()
 	}
 
 	v_position /= ( fn * (fn + 5.0) );
-	vec3 normal = normalize( cross( resTangent1, resTangent2 ) );
-
-	if( vertexID == 6 )
-	{
-		int valence = valences[1 + vertexID * 2];
-		int neighborX = neighborIndices[valence * 3];
-		int neighborY = neighborIndices[valence * 3 + 1];
-		int neighborZ = neighborIndices[valence * 3 + 2];
-		v_normal = vec4( neighborX, neighborY, neighborZ, 1 );
-	}
-	else
-	{
-		int id = vertexID + 5;
-		vec3 pos = pullNeighbor( id );
-		v_normal = vec4( pos.x, pos.y, pos.z, 1 ) * 4;
-	}
+	vec3 normal = cross( resTangent1, resTangent2 ) ;
 	
-	gl_Position = vec4( in_position, 1.0 );	
+	v_normal = normalize( vec4( normal.x, normal.y, normal.z, 1 ) );
+	gl_Position = vec4( v_position, 1.0 );	
 };
