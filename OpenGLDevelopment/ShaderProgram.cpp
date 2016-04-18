@@ -405,6 +405,11 @@ bool ShaderProgram::setSBO( string name,
 bool ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName )
 {
 	GLuint sboHandle = getSBOHandle( sboName );
+	return setSBOBindingPoint( bindingPointIndex, sboName, sboHandle );
+}
+
+bool ShaderProgram::setSBOBindingPoint( GLuint bindingPointIndex, string sboName, GLuint sboHandle )
+{
 	glBindBuffer( GL_SHADER_STORAGE_BUFFER, sboHandle );
 
 	GLuint blockIndex = getBlockIndex( sboName );
@@ -500,6 +505,7 @@ bool ShaderProgram::setVBO( string attributeName,
 				   dataLength * sizeof( GLint ),
 				   usage );
 }
+
 bool ShaderProgram::shareExistingVBO( string attributeName, 
 									  GLuint attributeIndex,
 									  GLuint vboHandle )

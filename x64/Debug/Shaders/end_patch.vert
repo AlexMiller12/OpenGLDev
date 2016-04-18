@@ -2,7 +2,7 @@
 
 layout (std430) buffer vertexData
 { 
-  float vbo[];
+  float vbo[]; 
 };
 
 layout (std430) buffer valenceBuffer
@@ -41,11 +41,13 @@ void main()
 	}
 	else
 	{
-		vec4 position = vec4( vbo[vertexID * 3],
-							  vbo[vertexID * 3 + 1],
-							  vbo[vertexID * 3 + 2],
-							  1 );
-		v_color = position;// + vec4( 2,2,2,1 );
+		int id = vertexID + 5;
+		vec4 pos = vec4( vbo[id * 3],
+						 vbo[id * 3 + 1],
+						 vbo[id * 3 + 2],
+						 1 );
+		// vec3 pos = vbo[vertexID];
+		v_color = vec4( pos.x, pos.y, pos.z, 1 ) * 4;
 		// v_color = v_color / 4;
 		// v_color = vec4(1);
 	}

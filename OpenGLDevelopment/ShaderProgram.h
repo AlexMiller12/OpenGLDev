@@ -111,6 +111,7 @@ public:
 						GLenum usage = GL_DYNAMIC_COPY );
 
 	bool setSBOBindingPoint( GLuint bindingPointIndex, string sboName );
+	bool setSBOBindingPoint( GLuint bindingPointIndex, string sboName, GLuint sboHandle );
 
 	bool setUniform( string uniformName, mat3 value );
 	bool setUniform( string uniformName, mat4 value );

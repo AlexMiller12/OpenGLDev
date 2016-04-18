@@ -70,19 +70,24 @@ vector<GLfloat> makeEnd()
 		  2,  0,  0,
 		  2, -2,  0,
 		 -2, -2,  0,
-		 -2,  0,  0,
-		  0,  2,  0,	// 6
-		  4,  2,  0,
-		  4, -4,  0,
-		 -4, -4,  0,
-		 -4,  2,  0
+		 -2,  0,  0,	// 6
+		 // 0,  2,  0,	
+		 // 4,  2,  0,
+		 // 4, -4,  0,
+		 //-4, -4,  0,
+		 //-4,  2,  0
+		 1, 0, 0,
+		 1, 1, 1,
+		 1, 1, 1,
+		 1, 1, 1,
+		 1, 1, 1
 	};
 	for( int i = 0; i < 33; i++ )
 	{
 		endVerts[i] *= 0.25f;
 	}
 	vector<GLfloat> vertices;
-	vertices.assign( endVerts, endVerts + 18 );
+	vertices.assign( endVerts, endVerts + 33 );
 	return vertices;
 }
 
@@ -212,17 +217,17 @@ void showEndPatch()
 	//};
 	GLfloat endVerts[33] =
 	{
-		0, 0, 0,	// 0
-		0, 2, 0,
-		2, 0, 0,
-		2, -2, 0,
-		-2, -2, 0,
-		-2, 0, 0,
-		0, 2, 0,	// 6
-		4, 2, 0,
-		4, -4, 0,
-		-4, -4, 0,
-		-4, 2, 0
+		0,0,0,
+		1,1,1,
+		1,0,0,
+		1, 1, 1,
+		1, 1, 1,
+		1, 0, 0,
+		1,1,1,
+		1,1,1,
+		1,1,1,
+		1,1,1,
+		1,1,1
 	};
 
 	GLint offsetAndValenceBuffer[12] =
@@ -268,14 +273,16 @@ void showEndPatch()
 	endPatchProgram.setIndices( indices );
 
 	ShaderProgram::createSBO( "valenceBuffer" );
-	ShaderProgram::createSBO( "neighborIndexBuffer" );
-	ShaderProgram::createSBO( "vertexData" );
 	ShaderProgram::setSBO( "valenceBuffer", valenceBufferSize, offsetAndValenceBuffer );
-	ShaderProgram::setSBO( "neighborIndexBuffer", neighborIndexBufferSize, neighborIndexBuffer );
-	ShaderProgram::setSBO( "vertexData", vertexDataBufferSize, endVerts );
 	endPatchProgram.setSBOBindingPoint( 2, "valenceBuffer" );
+
+	ShaderProgram::createSBO( "neighborIndexBuffer" );
+	ShaderProgram::setSBO( "neighborIndexBuffer", neighborIndexBufferSize, neighborIndexBuffer );
 	endPatchProgram.setSBOBindingPoint( 1, "neighborIndexBuffer" );
-	endPatchProgram.setSBOBindingPoint( 3, "vertexData" );
+
+	ShaderProgram::createSBO( "vertexData" );
+	GLuint vboHandle = endPatchProgram.getAttributeLocation( "in_position" );
+	endPatchProgram.setSBOBindingPoint( 3, "vertexData", vboHandle );
 
 	while( ! renderer.shouldClose() )
 	{
