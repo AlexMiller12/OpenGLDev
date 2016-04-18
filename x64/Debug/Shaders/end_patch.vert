@@ -1,5 +1,7 @@
 #version 430
 
+const float PI = 3.14159265359;
+
 //---------------------------------------------------------VARIABLES:
 
 layout (std430) buffer vertexData
@@ -9,7 +11,7 @@ layout (std430) buffer vertexData
 
 layout (std430) buffer valenceBuffer
 { 
-  int valence[];
+  int valences[];
 };
 
 layout (std430) buffer neighborIndexBuffer
@@ -22,7 +24,7 @@ in float in_vertexID;
 
 out vec3 v_position;
 
-out vec4 v_color;
+out vec4 v_normal;
 
 //-----------------------------------------------------------HELPERS:
 
@@ -37,28 +39,53 @@ vec3 pullNeighbor( int neighborIndex )
 
 void main()
 {
-	v_position = in_position;	
 	int vertexID = int( in_vertexID );
-	// int valence = valence[1 + vertexID * 2];
-	// float fn = float( valence );
-	
-	// vec3 resTangent1 = vec3( 0 );
-	// vec3 resTangent2 = vec3( 0 );
+	int firstNeighborIndex = valences[vertexID * 2];
+	int valence = valences[1 + vertexID * 2];
 
+	float fn = float( valence );
+
+	vec3 resTangent1 = vec3( 0 );
+	vec3 resTangent2 = vec3( 0 );
+
+	v_position = in_position * fn * fn;	
+	float cos_fn = cos( PI / fn );
+	float tmp = ( sqrt( 4.0 + cos_fn * cos_fn ) - cos_fn ) * 0.25;
+
+	for( int i = 0; i < valence; i++ )
+	{
+		int neighborIndex = firstNeighborIndex + 2 * i;
+		vec3 neighborPos = pullNeighbor( neighborIndex );
+		int diagonalIndex = neighborIndex + 1;
+		vec3 diagonalPos = pullNeighbor( diagonalIndex );
+
+		v_position += neighborPos * 4.0 + diagonalPos;
+
+		float alpha1 = cos( (2.0 * PI * i) / fn );
+		float alpha2 = sin( (2.0 * PI * i) / fn );
+		float beta1 = tmp * cos( (2.0 * PI * i + PI) / fn );
+		float beta2 = tmp * sin( (2.0 * PI * i + PI) / fn );
+		
+		resTangent2 += alpha1 * neighborPos + beta1 * diagonalPos;
+		resTangent1 += alpha2 * neighborPos + beta2 * diagonalPos;
+	}
+
+	v_position /= ( fn * (fn + 5.0) );
+	vec3 normal = normalize( cross( resTangent1, resTangent2 ) );
 
 	if( vertexID == 6 )
 	{
-		int valence = valence[1 + vertexID * 2];
+		int valence = valences[1 + vertexID * 2];
 		int neighborX = neighborIndices[valence * 3];
 		int neighborY = neighborIndices[valence * 3 + 1];
 		int neighborZ = neighborIndices[valence * 3 + 2];
-		v_color = vec4( neighborX, neighborY, neighborZ, 1 );
+		v_normal = vec4( neighborX, neighborY, neighborZ, 1 );
 	}
 	else
 	{
 		int id = vertexID + 5;
 		vec3 pos = pullNeighbor( id );
-		v_color = vec4( pos.x, pos.y, pos.z, 1 ) * 4;
+		v_normal = vec4( pos.x, pos.y, pos.z, 1 ) * 4;
 	}
 	
 	gl_Position = vec4( in_position, 1.0 );	

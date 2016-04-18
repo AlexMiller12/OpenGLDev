@@ -206,47 +206,24 @@ void showCube()
 
 void showEndPatch()
 {
-	//GLint offsetAndValenceBuffer[12] =
-	//{
-	//	0, 3,
-	//	5, 4,
-	//	13, 3,
-	//	19, 4,
-	//	26, 4,
-	//	33, 3
-	//};
-	GLfloat endVerts[33] =
-	{
-		0,0,0,
-		1,1,1,
-		1,0,0,
-		1, 1, 1,
-		1, 1, 1,
-		1, 0, 0,
-		1,1,1,
-		1,1,1,
-		1,1,1,
-		1,1,1,
-		1,1,1
-	};
-
 	GLint offsetAndValenceBuffer[12] =
 	{
-		0, 0,
-		3, 1,
-		6, 2,
-		9, 3,
-		12, 4,
-		15, 5
+		0, 3,
+		5, 4,
+		13, 3,
+		19, 4,
+		26, 4,
+		33, 3
 	};
-	GLint neighborIndexBuffer[18] =
+
+	GLint neighborIndexBuffer[39] =
 	{
-		0, 0, 0,
-		1, 1, 1,
-		1, 1, 1,
-		0, 1, 0,
-		0, 1, 0,
-		1, 1, 1
+		1,2,3,4,5,
+		6,7,2,3,0,4,5,10,
+		7,8,3,0,1,6,
+		2,7,8,9,4,0,1,
+		0,3,8,9,10,5,1,
+		1,0,4,9,10,6
 	};
 
 	int valenceBufferSize = 12 * sizeof( GLint );
